@@ -14,12 +14,12 @@ namespace MissingC
         public static SortedDictionary<string, int> validCitySlots = new SortedDictionary<string, int>
         { { "Amsterdam", 8 }, { "Ankara", 35 }, { "Antalya", 61 }, { "Baku", 58 }, { "Barcelona", 9 }, { "Belgrade", 36 },
         { "Berlin", 7 }, { "Brussels", 33 }, { "Bucharest", 46 }, { "Budapest", 42 }, { "Buenos Aires", 17 }, { "Chicago" , 60},
-        { "Copenhagen", 22 }, { "Dubrovnik", 29 }, { "Glasgow", 27 }, { "Helsinki", 19 }, { "Istanbul", 60 }, { "Izmir", 22 },
+        { "Copenhagen", 22 }, { "Dubrovnik", 29 }, { "Glasgow", 27 }, { "Helsinki", 19 }, { "Istanbul", 30 }, { "Izmir", 47 },
         { "Jakarta", 55 }, { "Johannesburg", 51 }, { "Kiev", 56 }, { "London", 5 }, { "Los Angeles", 14 }, { "Madrid", 24 },
         { "Manila", 54 }, { "Melbourne", 10 }, { "Mexico City", 32 }, { "Milan", 52 }, { "Montreal", 38 }, { "Moscow", 18 },
         { "Nashville", 11 }, { "New York", 6 }, { "Paris", 20 }, { "Porto", 31 }, { "Rio de Janeiro", 25 }, { "Rome", 23 },
         { "São Paulo", 21 }, { "Sarajevo", 49 }, { "Seattle", 50 }, { "Shanghai", 45 }, { "Singapore", 39 }, { "Sofia", 53 },
-        { "Stockholm", 1 }, { "Tallin", 34 }, { "Tokyo", 62 }, { "Toronto", 16 }, { "Tromsø", 26 }, { "Warsaw", 48 }, { "Vilnius", 28 }
+        { "Stockholm", 1 }, { "Tallinn", 34 }, { "Tokyo", 62 }, { "Toronto", 16 }, { "Tromsø", 26 }, { "Warsaw", 48 }, { "Vilnius", 28 }
         }; //PPM Cities and respective IDs
         public static IEnumerable<TControl> GetChildControls<TControl>(Control control) where TControl : Control
         {

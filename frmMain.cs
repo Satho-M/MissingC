@@ -47,7 +47,7 @@ namespace MissingC
         { "Manila", 54 }, { "Melbourne", 10 }, { "Mexico City", 32 }, { "Milan", 52 }, { "Montreal", 38 }, { "Moscow", 18 },
         { "Nashville", 11 }, { "New York", 6 }, { "Paris", 20 }, { "Porto", 31 }, { "Rio de Janeiro", 25 }, { "Rome", 23 },
         { "São Paulo", 21 }, { "Sarajevo", 49 }, { "Seattle", 50 }, { "Shanghai", 45 }, { "Singapore", 39 }, { "Sofia", 53 },
-        { "Stockholm", 1 }, { "Tallin", 34 }, { "Tokyo", 62 }, { "Toronto", 16 }, { "Tromsø", 26 }, { "Warsaw", 48 }, { "Vilnius", 28 }
+        { "Stockholm", 1 }, { "Tallinn", 34 }, { "Tokyo", 62 }, { "Toronto", 16 }, { "Tromsø", 26 }, { "Warsaw", 48 }, { "Vilnius", 28 }
         }; //PPM Cities and respective IDs
         private SortedDictionary<string, int> validGenreSlots = new SortedDictionary<string, int>{
             {"African Music", 18}, {"Blues", 15}, {"Classical", 16}, {"Country & Western", 13}, {"Electronica", 7}, {"Flamenco", 19},
@@ -469,11 +469,12 @@ namespace MissingC
             
             List<Club> dbClubs = new List<Club>(SqliteDataAccess.LoadClubs(this.idUtilizador));
 
-            HashSet<Club> hashset = new HashSet<Club>(dbClubs);
-            IEnumerable<Club> nonduplicates = input.Where(e => hashset.Add(e));
+            //HashSet<Club> hashset = new HashSet<Club>(dbClubs);
+            //IEnumerable<Club> nonduplicates = input.Where(e => hashset.Add(e));
 
-            List<Club> output = new List<Club>(nonduplicates);
-            
+            List<Club> output = input.Where(n => !dbClubs.Select(n1 => n1.Id).Contains(n.Id)).ToList();
+
+
             LabelUpdate();
 
             return output;          
@@ -756,6 +757,7 @@ namespace MissingC
                                     if (tp.Popularity.Equals(valuePair.Value))
                                     {
                                         TPrice = tp.Price;
+                                        break;
                                     }
                                 }
                             }
