@@ -18,180 +18,77 @@ namespace MissingC
         }
 
         //User
-        public static bool LoadUser(string id)
+        public static bool LoadUser(int id)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_User Where idUser=@id", new { Id = id });
-                if (output.Count() > 0)
-                {
+                var parameters = new { ID = id };
+                var sql = "Select * from tbl_User Where idUser = @ID";
+                var result = cnn.Query(sql, parameters);
+                if (result.Count() > 0)
                     return true;
-                }
 
                 return false;
             }
         }
-        public static void SaveUser(string id)
+        public static void SaveUser(int id)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute("Insert into tbl_User (idUser) values(@id)", new { id });
+                var parameters = new { ID = id };
+                var sql = "Insert into tbl_User (idUser) values(@ID)";
+                cnn.Execute(sql, parameters);
             }
         }
 
         //Clubs
-        public static List<Club> LoadClubs(string id)
+        public static List<Club> LoadClubs(int id)
         {
-            List<Club> outputClubs = new List<Club>();
-
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_Club Where idUserClub=@id", new { Id = id }).ToList();
+                var parameters = new { ID = id };
+                var sql = "Select * from tbl_Club Where idUserClub = @ID";
+                var result = cnn.Query<Club>(sql, parameters);
 
-                foreach (IDictionary<string, object> row in output)
-                {
-                    Club c = new Club();
-
-                    foreach (var pair in row)
-                    {
-
-
-                        if (pair.Key.Equals("idClub"))
-                        {
-                            c.Id = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("nameClub"))
-                        {
-                            c.Name = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("cityClub"))
-                        {
-                            c.City = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("idChainClub"))
-                        {
-                            if (pair.Value == null) 
-                            {
-                                c.ChainId = null;
-                            }
-                            else
-                            {
-                                c.ChainId = pair.Value.ToString();
-                            }
-                        }
-                        else if (pair.Key.Equals("idUserClub"))
-                        {
-                            c.UserId = pair.Value.ToString();
-                        };
-
-
-                    }
-
-                    outputClubs.Add(c);
-                }
-
-                return outputClubs;
+                
+                return result.ToList();
             }
         }
-        public static List<Club> LoadClubsPerChain(string idUser, string chain = null)
+        public static List<Club> LoadClubsPerChain(int idUser, string idChain = null)
         {
-            List<Club> outputClubs = new List<Club>();
-
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                if (!String.IsNullOrEmpty(chain))
-                {
-                    var output = cnn.Query("Select * from tbl_Club Where idUserClub=@Id And idChainClub = @idChain", new { Id = idUser, idChain = chain });
-
-                    foreach (IDictionary<string, object> row in output)
-                    {
-                        Club c = new Club();
-
-                        foreach (var pair in row)
-                        {
-
-
-                            if (pair.Key.Equals("idClub"))
-                            {
-                                c.Id = pair.Value.ToString();
-                            }
-                            else if (pair.Key.Equals("nameClub"))
-                            {
-                                c.Name = pair.Value.ToString();
-                            }
-                            else if (pair.Key.Equals("cityClub"))
-                            {
-                                c.City = pair.Value.ToString();
-                            }
-                            else if (pair.Key.Equals("idChainClub"))
-                            {
-                                if (pair.Value == null)
-                                    c.ChainId = null;
-                                else
-                                    c.ChainId = pair.Value.ToString();
-                            }
-                            else if (pair.Key.Equals("idUserClub"))
-                            {
-                                c.UserId = pair.Value.ToString();
-                            };
-
-
-                        }
-
-                        outputClubs.Add(c);
-                    }
-
-                }
+                string sql;
+                var parameters = new { IDUser = idUser, IDChain = idChain };
+                if (!String.IsNullOrEmpty(parameters.IDChain))
+                    sql = "Select * from tbl_Club Where idChainClub = @IDChain And idUserClub = @IDUser";
                 else
-                {
-                    var output = cnn.Query("Select * from tbl_Club Where idChainClub Is null And idUserClub=@id", new { Id = idUser });
+                    sql = "Select * from tbl_Club Where idChainClub Is null And idUserClub = @IDUser";
 
-                    foreach (IDictionary<string, object> row in output)
-                    {
-                        Club c = new Club();
+                var result = cnn.Query<Club>(sql, parameters).ToList();
 
-                        foreach (var pair in row)
-                        {
-
-
-                            if (pair.Key.Equals("idClub"))
-                            {
-                                c.Id = pair.Value.ToString();
-                            }
-                            else if (pair.Key.Equals("nameClub"))
-                            {
-                                c.Name = pair.Value.ToString();
-                            }
-                            else if (pair.Key.Equals("cityClub"))
-                            {
-                                c.City = pair.Value.ToString();
-                            }
-                            else if (pair.Key.Equals("idChainClub"))
-                            {
-                                if (pair.Value == null)
-                                    c.ChainId = null;
-                            }
-                            else if (pair.Key.Equals("idUserClub"))
-                            {
-                                c.UserId = pair.Value.ToString();
-                            };
-
-
-                        }
-
-                        outputClubs.Add(c);
-                    }
-                }    
-                
-                return outputClubs;
+                return result;
             }
         }
         public static void SaveClubs(List<Club> clubs)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                foreach (Club club in clubs)
-                    cnn.Execute("Insert into tbl_Club (idClub, nameClub, cityClub, idChainClub, idUserClub) values (@Id, @Name, @City, @ChainId, @UserId)", club);
+                foreach (Club club in clubs) 
+                {
+                    var parameteres = new
+                    {
+                        ID = club.idClub,
+                        Name = club.nameClub,
+                        City = club.cityClub,
+                        IDChain = club.idChainClub,
+                        IDUser = club.idUserClub
+                    };
+
+                    var sql = "Insert into tbl_Club (idClub, nameClub, cityClub, idChainClub, idUserClub) values (@ID, @Name, @City, @IDChain, @IDUser)";
+                                    
+                    cnn.Execute(sql, parameteres);
+                }
             }
         }
         public static void DeleteClubs(List<Club> clubs)
@@ -199,100 +96,56 @@ namespace MissingC
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
                 foreach (Club club in clubs)
-                    cnn.Execute("Delete from tbl_Club Where idClub=@Id", new { club.Id });
+                {
+                    var parameters = new { ID = club.idClub };
+                    var sql = "Delete from tbl_Club Where idClub = @ID";
+
+                    cnn.Execute(sql, parameters);
+                }
             }
         }
-        public static void UpdateChaininClubs(List<Club> clubs)
+        public static void UpdateChainInClubs(List<Club> clubs)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                foreach (Club club in clubs)
-                    cnn.Execute("Update tbl_Club Set idChainClub = @idChain Where idClub = @id", new { idChain = club.ChainId, id = club.Id });
+                foreach (Club club in clubs) 
+                {
+                    var parameters = new { ID = club.idClub, IDChain = club.idChainClub};
+                    var sql = "Update tbl_Club Set idChainClub = @IDChain Where idClub = @ID";
+                
+                    cnn.Execute(sql, parameters);
+                }
             }
         }
         
         //Chains
-        public static List<Chain> LoadChains(string id)
+        public static List<Chain> LoadChains(int id)
         {
-            List<Chain> outputChain = new List<Chain>();
-
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_Chain Where idUserChain=@id", new { Id = id }).ToList();
-
-                foreach (IDictionary<string, object> row in output)
-                {
-                    Chain c = new Chain();
-
-                    foreach (var pair in row)
-                    {
-
-
-                        if (pair.Key.Equals("idChain"))
-                        {
-                            c.Id = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("nameChain"))
-                        {
-                            c.Name = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("genreChain"))
-                        {
-                            c.Genre = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("idUserChain"))
-                        {
-                            c.UserId = pair.Value.ToString();
-                        };
-
-
-                    }
-
-                    outputChain.Add(c);
-                }
-
-                return outputChain;
+                var parameters = new { ID = id};
+                var sql = "Select * from tbl_Chain Where idUserChain = @ID";
+                var result = cnn.Query<Chain>(sql, parameters).ToList();
+                
+                return result;
             }
         }
-        public static Chain LoadChainByName(string id, string name)
+        public static Chain LoadChainByName(int id, string name)
         {
-            Chain c = new Chain();
-
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_Chain Where idUserChain=@id And nameChain=@name", new { Id = id, Name = name }).ToList();
+                var parameters = new { ID = id, Name = name };
+                var sql = "Select * from tbl_Chain Where idUserChain = @ID And nameChain = @Name";
+                var result = cnn.QuerySingle<Chain>(sql, parameters);
 
-                foreach (IDictionary<string, object> row in output)
-                {
-                    foreach (var pair in row)
-                    {
-                        if (pair.Key.Equals("idChain"))
-                        {
-                            c.Id = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("nameChain"))
-                        {
-                            c.Name = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("genreChain"))
-                        {
-                            c.Genre = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("idUserChain"))
-                        {
-                            c.UserId = pair.Value.ToString();
-                        };
-                    }
-                }
-
-                return c;
+                return result;
             }
         }
         public static void SaveChain(Chain chain)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute("Insert into tbl_Chain (nameChain, genreChain, idUserChain) values (@Name, @Genre, @UserId)", chain);
+                cnn.Execute("Insert into tbl_Chain (nameChain, idUserChain) values (@nameChain, @idUserChain)", chain);
             }
         }
         public static void DeleteChain(string id)
@@ -306,7 +159,7 @@ namespace MissingC
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute("Update tbl_Chain Set nameChain=@chainName, genreChain=@chainGenre Where idChain = @chainId", new { chainName = chain.Name, chainGenre = chain.Genre, chainId = chain.Id });
+                cnn.Execute("Update tbl_Chain Set nameChain=@chainName, Where idChain = @chainId", new { chainName = chain.nameChain, chainId = chain.idChain });
             }
         }
 
@@ -315,79 +168,39 @@ namespace MissingC
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute("Insert into tbl_Band (idBand, nameBand, artCutBand, idChainBand, idUserBand, riderBand) values (@Id, @Name, @ArtistCut, @ChainId, @UserId, @Rider)", band);
+                cnn.Execute("Insert into tbl_Band (idBand, nameBand, artCutBand, idChainBand, idUserBand, riderBand) values (@idBand, @nameBand, @artCutBand, @idChainBand, @idUserBand, @riderBand)", band);
             }
         }
         public static void UpdateBand(Band band)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute("Update tbl_Band Set nameBand=@Name, riderBand=@Rider, artCutBand=@ArtistCut, lastInviteBand=@LastInvite Where idBand = @Id", new { band.Name, band.Rider, band.ArtistCut, band.LastInvite, band.Id });
+                cnn.Execute("Update tbl_Band Set nameBand=@nameBand, riderBand=@riderBand, artCutBand=@artCutBand, lastInviteBand=@lastInviteBand Where idBand = @idBand", new { band.nameBand, band.riderBand, band.artCutBand, band.lastInviteBand, band.idBand });
             }
         }
-        
-        public static List<Band> LoadBands(Chain chain)
+        public static Band LoadBand(int idBand)
         {
-            List<Band> outputBand = new List<Band>();
-
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_Band Where idChainBand=@id", new { chain.Id }).ToList();
+                var parameters = new { Id = idBand };
+                var sql = "Select * from tbl_Band Where idBand = @ID";
+                var result = cnn.QuerySingle<Band>(sql, parameters);
 
-                foreach (IDictionary<string, object> row in output)
-                {
-                    Band b = new Band();
-
-                    foreach (var pair in row)
-                    {
-
-
-                        if (pair.Key.Equals("idBand"))
-                        {
-                            b.Id = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("nameBand"))
-                        {
-                            b.Name = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("artCutBand"))
-                        {
-                            b.ArtistCut = Int32.Parse(pair.Value.ToString());
-                        }
-                        else if (pair.Key.Equals("riderBand"))
-                        {
-                            b.Rider = Int32.Parse(pair.Value.ToString());
-                        }
-                        else if (pair.Key.Equals("idChainBand"))
-                        {
-                            b.ChainId = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("idUserBand"))
-                        {
-                            b.UserId = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("lastInviteBand"))
-                        {
-                            if (pair.Value == null)
-                            {
-                                b.LastInvite = null;
-                            }
-                            else
-                            {
-                                b.LastInvite = pair.Value.ToString();
-                            }
-                        };
-
-
-                    }
-
-                    outputBand.Add(b);
-                }
-
-                return outputBand;
+                return result;
             }
         }
-        public static void DeleteBand(string id)
+        public static List<Band> LoadBands(Chain chain)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                var parameters = new {Id = chain.idChain };
+                var sql = "Select * from tbl_Band Where idChainBand = @ID";
+                var result = cnn.Query<Band>(sql, parameters).ToList();
+
+                return result;
+            }
+        }
+        public static void DeleteBand(int id)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
@@ -400,7 +213,7 @@ namespace MissingC
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_Ticket Where idBandTicket=@id", new { band.Id }).ToList();
+                var output = cnn.Query("Select * from tbl_Ticket Where idBandTicket = @idBandTicket", new { idBandTicket = band.idBand }).ToList();
 
                 if (output.Count > 0)
                 {
@@ -412,50 +225,11 @@ namespace MissingC
         }
         public static List<TicketPrice> GetTicketsBand(Band band)
         {
-            List<TicketPrice> outputTicket = new List<TicketPrice>();
-
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_Ticket Where idBandTicket=@id", new { band.Id }).ToList();
+                var output = cnn.Query<TicketPrice>("Select * from tbl_Ticket Where idBandTicket = @idBandTicket", new { idBandTicket = band.idBand }).ToList();
 
-                foreach (IDictionary<string, object> row in output)
-                {
-                    TicketPrice t = new TicketPrice();
-
-                    foreach (var pair in row)
-                    {
-
-
-                        if (pair.Key.Equals("idTicket"))
-                        {
-                            t.Id = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("popTicket"))
-                        {
-                            t.Popularity = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("priceTicket"))
-                        {
-                            t.Price = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("idUserTicket"))
-                        {
-                            t.UserId = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("idBandTicket"))
-                        {
-                            t.BandId = pair.Value.ToString();
-                        };
-
-
-                    }
-
-                    outputTicket.Add(t);
-                }
-
-                return outputTicket;
-
-
+                return output;
             }
         }
         public static void SaveTickets(List<TicketPrice> tickets)
@@ -464,7 +238,7 @@ namespace MissingC
             {
                 foreach (TicketPrice ticket in tickets)
                 {
-                    cnn.Execute("Insert into tbl_Ticket (popTicket, priceTicket, idUserTicket, idBandTicket) values (@Popularity, @Price, @UserId, @BandId)", ticket);
+                    cnn.Execute("Insert into tbl_Ticket (popTicket, priceTicket, idUserTicket, idBandTicket) values (@popTicket, @priceTicket, @idUserTicket, @idBandTicket)", ticket);
                 }
             }
         }
@@ -474,7 +248,7 @@ namespace MissingC
             {
                 foreach (TicketPrice ticket in tickets)
                 {
-                    cnn.Execute("Update tbl_Ticket Set popTicket=@Popularity, priceTicket=@Price Where idTicket = @Id", new { ticket.Popularity, ticket.Price, ticket.Id });
+                    cnn.Execute("Update tbl_Ticket Set popTicket=@popTicket, priceTicket=@priceTicket Where idTicket = @idTicket", new { ticket.popTicket, ticket.priceTicket, ticket.idTicket });
                 }
             }
         }
@@ -501,51 +275,22 @@ namespace MissingC
                 return false;
             }
         }
-        public static Tour GetTour(int year, int idBand, int idUser) {
-
-            Tour tour = new Tour();
-            
-
+        public static Tour GetTour(int year, int idBand, int idUser) 
+        {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_Tour Where yearTour=@Year AND idBandTour=@idBand AND idUserTour=@idUser", new { year, idBand, idUser }).ToList();
-
-                foreach (IDictionary<string, object> row in output)
-                {
-                    foreach (var pair in row)
-                    {
-                        if (pair.Key.Equals("idTour"))
-                        {
-                            tour.Id = Int32.Parse(pair.Value.ToString());
-                        }
-                        else if (pair.Key.Equals("yearTour"))
-                        {
-                            tour.Year = Int32.Parse(pair.Value.ToString());
-                        }
-                        else if (pair.Key.Equals("typeTour"))
-                        {
-                            tour.Type = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("idBandTour"))
-                        {
-                            tour.idBand = Int32.Parse(pair.Value.ToString());
-                        }
-                        else if (pair.Key.Equals("idUserTour"))
-                        {
-                            tour.idUser = Int32.Parse(pair.Value.ToString());
-                        }
-                    }
-                }
+                var output = cnn.QuerySingle<Tour>("Select * from tbl_Tour Where yearTour=@Year AND idBandTour=@idBand AND idUserTour=@idUser", new { year, idBand, idUser });
+                
+                return output;
             }
-
-            return tour;
+            
         }
         public static void UpdateTour(Tour tour)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
                 
-                    cnn.Execute("Update tbl_Tour Set yearTour=@Year, typeTour=@Type Where idTour = @Id", new { tour.Year, tour.Type, tour.Id});
+                    cnn.Execute("Update tbl_Tour Set yearTour=@yearTour, typeTour=@typeTour Where idTour = @idTour", new { tour.yearTour, tour.typeTour, tour.idTour});
                 
             }
         }
@@ -553,66 +298,31 @@ namespace MissingC
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_TourDay Where dateTD=@Day AND timeTD=@Time AND cityTD=@City", new { day.Day, day.Time, day.City }).ToList();
+                var parameters = new { Day = day.dateTD, Time = day.timeTD, City = day.cityTD };
+                var sql = "Select * from tbl_TourDay Where dateTD = @Day AND timeTD = @Time AND cityTD = @City";
+                var result = cnn.Query(sql, parameters);
 
-                if (output.Count > 0)
-                {
+                if (result.Count() > 0)
                     return true;
-                }
 
                 return false;
             }
         }
         public static List<TourDay> GetTourDays(int year, int idBand)
         {
-            List<TourDay> outputTour = new List<TourDay>();
+            
 
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query("Select * from tbl_TourDay INNER JOIN tbl_Tour ON tbl_TourDay.idTourTD=tbl_Tour.idTour WHERE tbl_Tour.yearTour=@Year AND tbl_Tour.idBandTour=@idBand ", new {year, idBand }).ToList();
+                var parameters = new {Year =  year, IDBand = idBand };
 
-                foreach (IDictionary<string, object> row in output)
-                {
-                    TourDay td = new TourDay();
+                var sql = "Select * from tbl_TourDay " +
+                    "INNER JOIN tbl_Tour ON tbl_TourDay.idTourTD = tbl_Tour.idTour " +
+                    "WHERE tbl_Tour.yearTour = @Year AND tbl_Tour.idBandTour = @IDBand ";
 
-                    foreach (var pair in row)
-                    {
+                var result = cnn.Query<TourDay>(sql, parameters).ToList();
 
-
-                        if (pair.Key.Equals("idTD"))
-                        {
-                            td.Id = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("dateTD"))
-                        {
-                            td.Day = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("timeTD"))
-                        {
-                            td.Time = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("cityTD"))
-                        {
-                            td.City = pair.Value.ToString();
-                        }
-                        else if (pair.Key.Equals("idUserTD"))
-                        {
-                            td.UserId = Int32.Parse(pair.Value.ToString());
-                        }
-                        else if (pair.Key.Equals("idTourTD"))
-                        {
-                            td.TourId = Int32.Parse(pair.Value.ToString());
-                        };
-
-
-                    }
-
-                    outputTour.Add(td);
-                }
-
-                return outputTour;
-
-
+                return result;
             }
         }
         public static void DeleteTourDays(int id)
@@ -629,7 +339,7 @@ namespace MissingC
             {
                     foreach (TourDay tourday in tourdays)
                     {
-                        cnn.Execute("Insert into tbl_TourDay (dateTD, timeTD, cityTD, idUserTD, idTourTD) values (@Day, @Time, @City, @UserId, @TourId)", tourday);
+                        cnn.Execute("Insert into tbl_TourDay (dateTD, timeTD, cityTD, textBoxNameTD, idUserTD, idTourTD) values (@dateTD, @timeTD, @cityTD, @textBoxNameTD , @idUserTD, @idTourTD)", tourday);
                     }
 
             }
