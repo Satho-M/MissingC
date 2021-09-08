@@ -8,21 +8,12 @@ namespace MissingC
 {
     public class Club
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string City { get; set; }
-        public string ChainId { get; set; }
-        public string UserId { get; set; }
+        public string idClub { get; set; }
+        public string nameClub { get; set; }
+        public string cityClub { get; set; }
+        public string idChainClub { get; set; } //Foreign Key
+        public int idUserClub { get; set; } //Foreign Key
 
-        public override bool Equals(object obj)
-        {
-            Club c = obj as Club;
-            return c != null && c.Id == this.Id && c.Name == this.Name && c.City == this.City;
-        }
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode() ^ this.Name.GetHashCode() ^ this.City.GetHashCode();
-        }
     }
 
 
