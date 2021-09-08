@@ -8,9 +8,8 @@ namespace MissingC
 {
     public class Chain
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Genre { get; set; }
-        public string UserId { get; set; }
+        public string idChain { get; set; }
+        public string nameChain { get; set; }
+        public int idUserChain { get; set; } //Foreign Key
     }
 }
