@@ -1,7 +1,9 @@
-﻿using System;
+﻿using PlaywrightSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace MissingC
@@ -14,9 +16,30 @@ namespace MissingC
         [STAThread]
         static void Main()
         {
+            
+            Playwright.InstallAsync("./browsers/").Wait();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
-        }
+
+            Globals.browserPlaywright = new BrowserPlayWright("https://www.popmundo.com/");
+            Globals.browserPlaywright.Init().Wait();
+            
+
+            frmLogin fLogin = new frmLogin();
+            if (fLogin.ShowDialog() == DialogResult.OK)
+            {
+                Application.Run(new frmMain());
+            }
+            else
+            {
+                Application.Exit();
+            }
+        }        
     }
+
+    static class Globals
+        {
+            public static BrowserPlayWright browserPlaywright;
+        }
 }

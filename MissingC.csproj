@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\Microsoft.SourceLink.GitHub.1.0.0\build\Microsoft.SourceLink.GitHub.props" Condition="Exists('packages\Microsoft.SourceLink.GitHub.1.0.0\build\Microsoft.SourceLink.GitHub.props')" />
+  <Import Project="packages\Microsoft.SourceLink.Common.1.0.0\build\Microsoft.SourceLink.Common.props" Condition="Exists('packages\Microsoft.SourceLink.Common.1.0.0\build\Microsoft.SourceLink.Common.props')" />
+  <Import Project="packages\Microsoft.Build.Tasks.Git.1.0.0\build\Microsoft.Build.Tasks.Git.props" Condition="Exists('packages\Microsoft.Build.Tasks.Git.1.0.0\build\Microsoft.Build.Tasks.Git.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -49,21 +52,91 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\MissingCIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Dapper.2.0.90\lib\net461\Dapper.dll</HintPath>
     </Reference>
+    <Reference Include="Esprima, Version=1.0.1270.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>packages\Esprima.1.0.1270\lib\net461\Esprima.dll</HintPath>
+    </Reference>
+    <Reference Include="Macross.Json.Extensions, Version=2.0.0.21012, Culture=neutral, PublicKeyToken=7158422f590468ee, processorArchitecture=MSIL">
+      <HintPath>packages\Macross.Json.Extensions.2.0.0\lib\netstandard2.0\Macross.Json.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="MetroSet UI, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\MetroSet_UI.2.0.0\lib\net45\MetroSet UI.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Configuration.3.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Configuration.Abstractions.3.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Configuration.Binder.3.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.DependencyInjection.3.1.1\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.DependencyInjection.Abstractions.3.1.1\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Logging.3.1.1\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.3.1.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Options.3.1.1\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Primitives.3.1.1\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="PlaywrightSharp, Version=0.192.0.0, Culture=neutral, PublicKeyToken=db12f80f85d8ba23, processorArchitecture=MSIL">
+      <HintPath>..\packages\PlaywrightSharp.0.192.0\lib\netstandard2.0\PlaywrightSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.114.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\lib\net46\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Design" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Encodings.Web.5.0.1\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=5.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Json.5.0.2\lib\net461\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,13 +146,13 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ASyncWebBrowser.cs" />
     <Compile Include="Band.cs" />
     <Compile Include="Chain.cs" />
+    <Compile Include="Character.cs" />
     <Compile Include="Club.cs" />
-    <Compile Include="Day.cs" />
     <Compile Include="frmBand.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,11 +165,17 @@
     <Compile Include="frmChain.Designer.cs">
       <DependentUpon>frmChain.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmMain.cs">
+    <Compile Include="frmCharacter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmMain.Designer.cs">
-      <DependentUpon>frmMain.cs</DependentUpon>
+    <Compile Include="frmCharacter.Designer.cs">
+      <DependentUpon>frmCharacter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLogin.Designer.cs">
+      <DependentUpon>frmLogin.cs</DependentUpon>
     </Compile>
     <Compile Include="frmTicket.cs">
       <SubType>Form</SubType>
@@ -104,34 +183,45 @@
     <Compile Include="frmTicket.Designer.cs">
       <DependentUpon>frmTicket.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helper.cs" />
+    <Compile Include="BrowserPlayWright.cs" />
+    <Compile Include="frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmTouring.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmTouring.Designer.cs">
       <DependentUpon>frmTouring.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper.cs" />
     <Compile Include="TicketPrice.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqliteDataAccess.cs" />
     <Compile Include="Tour.cs" />
     <Compile Include="TourDay.cs" />
-    <Compile Include="Week.cs" />
+    <Content Include="Resources\MissingCIcon.ico" />
+    <None Include="Resources\background.jpg" />
     <EmbeddedResource Include="frmBand.resx">
       <DependentUpon>frmBand.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmChain.resx">
       <DependentUpon>frmChain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmMain.resx">
-      <DependentUpon>frmMain.cs</DependentUpon>
+    <EmbeddedResource Include="frmCharacter.resx">
+      <DependentUpon>frmCharacter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmLogin.resx">
+      <DependentUpon>frmLogin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmTicket.resx">
       <DependentUpon>frmTicket.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmTouring.resx">
-      <DependentUpon>frmTouring.cs</DependentUpon>
+    <EmbeddedResource Include="frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -141,10 +231,14 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Content Include="database\missingcDB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="frmTouring.resx">
+      <DependentUpon>frmTouring.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -179,5 +273,16 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
+    <Error Condition="!Exists('packages\Microsoft.Build.Tasks.Git.1.0.0\build\Microsoft.Build.Tasks.Git.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Build.Tasks.Git.1.0.0\build\Microsoft.Build.Tasks.Git.props'))" />
+    <Error Condition="!Exists('packages\Microsoft.Build.Tasks.Git.1.0.0\build\Microsoft.Build.Tasks.Git.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Build.Tasks.Git.1.0.0\build\Microsoft.Build.Tasks.Git.targets'))" />
+    <Error Condition="!Exists('packages\Microsoft.SourceLink.Common.1.0.0\build\Microsoft.SourceLink.Common.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.SourceLink.Common.1.0.0\build\Microsoft.SourceLink.Common.props'))" />
+    <Error Condition="!Exists('packages\Microsoft.SourceLink.Common.1.0.0\build\Microsoft.SourceLink.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.SourceLink.Common.1.0.0\build\Microsoft.SourceLink.Common.targets'))" />
+    <Error Condition="!Exists('packages\Microsoft.SourceLink.GitHub.1.0.0\build\Microsoft.SourceLink.GitHub.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.SourceLink.GitHub.1.0.0\build\Microsoft.SourceLink.GitHub.props'))" />
+    <Error Condition="!Exists('packages\Microsoft.SourceLink.GitHub.1.0.0\build\Microsoft.SourceLink.GitHub.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.SourceLink.GitHub.1.0.0\build\Microsoft.SourceLink.GitHub.targets'))" />
+    <Error Condition="!Exists('..\packages\PlaywrightSharp.0.192.0\build\netstandard2.0\PlaywrightSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PlaywrightSharp.0.192.0\build\netstandard2.0\PlaywrightSharp.targets'))" />
   </Target>
+  <Import Project="packages\Microsoft.Build.Tasks.Git.1.0.0\build\Microsoft.Build.Tasks.Git.targets" Condition="Exists('packages\Microsoft.Build.Tasks.Git.1.0.0\build\Microsoft.Build.Tasks.Git.targets')" />
+  <Import Project="packages\Microsoft.SourceLink.Common.1.0.0\build\Microsoft.SourceLink.Common.targets" Condition="Exists('packages\Microsoft.SourceLink.Common.1.0.0\build\Microsoft.SourceLink.Common.targets')" />
+  <Import Project="packages\Microsoft.SourceLink.GitHub.1.0.0\build\Microsoft.SourceLink.GitHub.targets" Condition="Exists('packages\Microsoft.SourceLink.GitHub.1.0.0\build\Microsoft.SourceLink.GitHub.targets')" />
+  <Import Project="..\packages\PlaywrightSharp.0.192.0\build\netstandard2.0\PlaywrightSharp.targets" Condition="Exists('..\packages\PlaywrightSharp.0.192.0\build\netstandard2.0\PlaywrightSharp.targets')" />
 </Project>

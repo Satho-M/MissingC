@@ -11,16 +11,21 @@ using System.Windows.Forms;
 
 namespace MissingC
 {
-    public partial class frmBand : MetroSetForm
+    public partial class frmBand : Form
     {
         private Chain slcChain;
-        private string idUser;
+        private int idUser;
         private bool edit;
         private Band editingBand;
 
-        public frmBand(bool edit, string idUser, Chain selectedChain, Band band = null)
+        public frmBand(bool edit, int idUser, Chain selectedChain, Band band = null)
         {
             InitializeComponent();
+
+            this.MaximizeBox = false;
+            this.ShowIcon = false;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+
             this.slcChain = selectedChain;
             this.idUser = idUser;
             this.edit = edit;
@@ -32,11 +37,11 @@ namespace MissingC
         {
             if (edit)
             {
-                txtBandName.Text = editingBand.Name;
-                txtBandId.Text = editingBand.Id;
+                txtBandName.Text = editingBand.nameBand;
+                txtBandId.Text = editingBand.idBand.ToString();
                 this.txtBandId.Enabled = false;
-                txtBandRider.Text = editingBand.Rider.ToString();
-                txtBandArtistCut.Text = editingBand.ArtistCut.ToString();
+                txtBandRider.Text = editingBand.riderBand.ToString();
+                txtBandArtistCut.Text = editingBand.artCutBand.ToString();
             }
         }
 
@@ -44,9 +49,9 @@ namespace MissingC
         {
             if (edit)
             {
-                editingBand.Name = txtBandName.Text;
-                editingBand.Rider = Int32.Parse(txtBandRider.Text);
-                editingBand.ArtistCut = Int32.Parse(txtBandArtistCut.Text);
+                editingBand.nameBand = txtBandName.Text;
+                editingBand.riderBand = Int32.Parse(txtBandRider.Text);
+                editingBand.artCutBand = Int32.Parse(txtBandArtistCut.Text);
 
                 SqliteDataAccess.UpdateBand(editingBand);
                 this.Close();
@@ -56,12 +61,12 @@ namespace MissingC
             {
                 Band b = new Band()
                 {
-                    Id = txtBandId.Text,
-                    Name = txtBandName.Text,
-                    Rider = Int32.Parse(txtBandRider.Text),
-                    ArtistCut = Int32.Parse(txtBandArtistCut.Text),
-                    UserId = this.idUser,
-                    ChainId = this.slcChain.Id
+                    idBand = Int32.Parse(txtBandId.Text),
+                    nameBand = txtBandName.Text,
+                    riderBand = Int32.Parse(txtBandRider.Text),
+                    artCutBand = Int32.Parse(txtBandArtistCut.Text),
+                    idUserBand = this.idUser,
+                    idChainBand = this.slcChain.idChain
                 };
 
                 SqliteDataAccess.SaveBand(b);

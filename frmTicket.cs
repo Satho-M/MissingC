@@ -11,21 +11,21 @@ using System.Windows.Forms;
 
 namespace MissingC
 {
-    public partial class frmTicket : MetroSetForm
+    public partial class frmTicket : Form
     {
-        private SortedDictionary<int, string> Scoring = new SortedDictionary<int, string>
-            { { 0, "truly abysmal" }, { 1, "abysmal" }, { 2, "bottom dwelling" }, { 3, "horrendous" }, { 4, "dreadful" }, { 5, "terrible" },
-            { 6, "poor" }, { 7, "below average" }, { 8, "mediocre" }, { 9, "above average" }, { 10, "decent" }, { 11, "nice" }, { 12, "pleasant" },
-            { 13, "good" }, { 14, "sweet" }, { 15, "splendid" }, { 16, "awesome" }, { 17, "great" }, { 18, "terrific" }, { 19, "wonderful" },
-            { 20, "incredible" }, { 21, "perfect" }, { 22, "revolutionary" }, { 23, "mind melting" }, { 24, "earth shaking" }, { 25, "GOD SMACKING" }, { 26, "GOD SMACKINGLY GLORIOUS" } };
         List<TicketPrice> ticketprice = new List<TicketPrice>();
         Band band;
-        string idUser;
+        int idUser;
         private bool edit;
 
-        public frmTicket(bool edit, Band band, string idUtilizador, List<TicketPrice> ticketPrice = null)
+        public frmTicket(bool edit, Band band, int idUtilizador, List<TicketPrice> ticketPrice = null)
         {
             InitializeComponent();
+
+            this.MaximizeBox = false;
+            this.ShowIcon = false;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+
             this.band = band;
             this.idUser = idUtilizador;
             this.edit = edit;
@@ -40,8 +40,6 @@ namespace MissingC
             {
                 FillScoreBoxes();
             }
-
-            this.labelBand.Text = "Band: " + band.Name;
         }
 
         private void FillScoreBoxes()
@@ -53,7 +51,7 @@ namespace MissingC
 
             foreach (TextBox tb in control)
             {
-                tb.Text = ticketprice[n].Price;
+                tb.Text = ticketprice[n].priceTicket;
                 n++;
             }
         }
@@ -62,7 +60,7 @@ namespace MissingC
         {
             string value;
 
-            if (this.Scoring.TryGetValue(n, out value))
+            if (Helper.Scoring.TryGetValue(n, out value))
                 return value;
 
             return null;
@@ -84,7 +82,7 @@ namespace MissingC
                 foreach (TextBox tb in control)
                 {
 
-                    this.ticketprice[n].Price = tb.Text;
+                    this.ticketprice[n].priceTicket = tb.Text;
 
                     temp.Add(ticketprice[n]);
                     n++;
@@ -105,13 +103,13 @@ namespace MissingC
                 {
                     TicketPrice t = new TicketPrice
                     {
-                        Price = tb.Text,
-                        UserId = idUser,
-                        BandId = band.Id
+                        priceTicket = tb.Text,
+                        idUserTicket = idUser,
+                        idBandTicket = band.idBand
                     };
                     if (!String.IsNullOrEmpty(CheckPop(n)))
                     {
-                        t.Popularity = CheckPop(n);
+                        t.popTicket = CheckPop(n);
                     }
                     
                     temp.Add(t);

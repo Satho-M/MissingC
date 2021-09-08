@@ -1,5 +1,4 @@
-﻿using MetroSet_UI.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,511 +10,326 @@ using System.Windows.Forms;
 
 namespace MissingC
 {
-    public partial class frmTouring : MetroSetForm
+    public partial class frmTouring : Form
     {
         private int year;
         private Band band;
         bool edit;
         int idutilizador;
-        string tourType;
-        DateTime firstDay;
-        List<Control> layoutListDates = new List<Control>();
-        List<Control> layoutListSingleTour = new List<Control>();
-        List<Control> layoutListDoubleTour = new List<Control>();
+        groupTextCombo[] groupTextCombos;
+
+
 
         public frmTouring(int year, bool edit, int idUser, Band band)
         {
             InitializeComponent();
+
+            this.MaximizeBox = false;
+            this.ShowIcon = false;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+
             this.edit = edit;
             this.idutilizador = idUser;
             this.band = band;
             this.year = year;
-            this.layoutListDates.Add(tableLayoutPanel14);
-            this.layoutListDates.Add(tableLayoutPanel15);
-            this.layoutListDates.Add(tableLayoutPanel16);
-            this.layoutListDates.Add(tableLayoutPanel17);
-            this.layoutListDates.Add(tableLayoutPanel18);
-            this.layoutListDates.Add(tableLayoutPanel19);
-            this.layoutListDates.Add(tableLayoutPanel20);
-            this.layoutListDates.Add(tableLayoutPanel21);
 
-            this.layoutListSingleTour.Add(tableLayoutPanel22);
-            this.layoutListSingleTour.Add(tableLayoutPanel24);
-            this.layoutListSingleTour.Add(tableLayoutPanel26);
-            this.layoutListSingleTour.Add(tableLayoutPanel28);
-            this.layoutListSingleTour.Add(tableLayoutPanel30);
-            this.layoutListSingleTour.Add(tableLayoutPanel32);
-            this.layoutListSingleTour.Add(tableLayoutPanel34);
-            this.layoutListSingleTour.Add(tableLayoutPanel36);
+            InfolblTouringBand.Text = this.band.nameBand;
+            InfolblTouringYear.Text = this.year.ToString();
+            DisableOrEnableControls(false);
 
-            this.layoutListDoubleTour.Add(tableLayoutPanel23);
-            this.layoutListDoubleTour.Add(tableLayoutPanel25);
-            this.layoutListDoubleTour.Add(tableLayoutPanel27);
-            this.layoutListDoubleTour.Add(tableLayoutPanel29);
-            this.layoutListDoubleTour.Add(tableLayoutPanel31);
-            this.layoutListDoubleTour.Add(tableLayoutPanel33);
-            this.layoutListDoubleTour.Add(tableLayoutPanel35);
-            this.layoutListDoubleTour.Add(tableLayoutPanel37);
-
-
-
+            GroupLabelTextCombo(tableLayoutPanelSingle, tableLayoutPanelDouble);
         }
 
-        private void frmTouring_Load(object sender, EventArgs e)
+        private void newfrmTouring_Load(object sender, EventArgs e)
         {
-
-
-            firstDay = Helper.GetInitialDateByYear(this.year);
-            FillLabelDates(firstDay, layoutListDates);
-            AddAutoCompleteToTextbox(layoutListSingleTour);
-            AddAutoCompleteToTextbox(layoutListDoubleTour);
-
-            FillTimeComboBox(layoutListSingleTour);
-            FillTimeComboBox(layoutListDoubleTour);
-
-            lblYear.Text = "Year: " + this.year.ToString();
-            lblBand.Text = "Band: " + this.band.Name;
+            AddAutoCompleteToTextbox(tableLayoutPanelSingle);
+            AddAutoCompleteToTextbox(tableLayoutPanelDouble);
+            FillLabelDates(Helper.GetInitialDateByYear(this.year), tableLayoutPanelDates);
+            FillTimeComboBox(tableLayoutPanelSingle);
+            FillTimeComboBox(tableLayoutPanelDouble);
 
             if (edit)
             {
-                FillControlsFromDB(layoutListSingleTour, layoutListDoubleTour);
+                FillControlsFromDB(groupTextCombos, this.year, this.band.idBand);
+            }
+        }
+
+        private void AddAutoCompleteToTextbox(Control ctrl)
+        {
+
+            var txtboxes = ctrl.Controls.OfType<TextBox>()
+                      .Where(c => c.Name.StartsWith("text"))
+                      .ToList();
+
+            foreach (TextBox txtbox in txtboxes)
+            {
+                AutoCompleteStringCollection allowedTypes = new AutoCompleteStringCollection();
+                foreach (KeyValuePair<string, int> pair in Helper.validCitySlots)
+                {
+                    allowedTypes.Add(pair.Key);
+                }
+                txtbox.AutoCompleteCustomSource = allowedTypes;
+                txtbox.AutoCompleteMode = AutoCompleteMode.Suggest;
+                txtbox.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            }
+
+
+        }
+        private void FillLabelDates(DateTime day, Control ctrl)
+        {
+
+            var labels = ctrl.Controls.OfType<Label>()
+                      .Where(c => c.Name.StartsWith("label"))
+                      .ToList()
+                      .OrderBy(c => c.Name);
+
+            foreach (Label label in labels)
+            {
+                label.Text = day.ToString().Split(' ')[0];
+                day = day.AddDays(1);
+            }
+
+        }
+        private void FillTimeComboBox(Control ctrl)
+        {
+            var cmbBoxes = ctrl.Controls.OfType<ComboBox>()
+                      .Where(c => c.Name.StartsWith("combo"))
+                      .ToList();
+
+            List<string> times = new List<string>();
+            foreach (KeyValuePair<int, string> pair in Helper.validTimeSlots)
+            {
+                times.Add(pair.Value);
+            }
+            foreach (ComboBox cmbbox in cmbBoxes)
+            {
+                cmbbox.DataSource = times.ToList();
+            }
+        }
+        private void DisableOrEnableControls(bool status)
+        {
+            tableLayoutPanelDouble.Enabled = status;
+            tableLayoutPanelSingle.Enabled = status;
+            tableLayoutPanelSchedDouble.Enabled = status;
+            tableLayoutPanelSchedSingle.Enabled = status;
+            btnTouringCheck.Enabled = status;
+            btnTouringDone.Enabled = status;
+        }
+        private void EnableControlsBasedOnTourType()
+        {
+            if (checkedListBoxTourType.SelectedItem.ToString().Equals("Double"))
+            {
+                DisableOrEnableControls(true);
             }
             else
             {
-                foreach (Control ctrl in tableLayoutPanel1.Controls)
-                {
-
-                    if (ctrl.Name == "tableLayoutPanel11")
-                    {
-                        ctrl.Enabled = true;
-                    }
-                    else
-                    {
-                        ctrl.Enabled = false;
-                    }
-
-                    foreach (Control Children in ctrl.Controls)
-                    {
-                        if (Children.Name == "tableLayoutPanel38" || Children.Name == "tableLayoutPanel39")
-                        {
-                            Children.Enabled = false;
-                        }
-                    }
-
-                }
+                tableLayoutPanelSingle.Enabled = true;
+                tableLayoutPanelDouble.Enabled = false;
+                tableLayoutPanelSchedSingle.Enabled = true;
+                tableLayoutPanelSchedDouble.Enabled = false;
+                btnTouringCheck.Enabled = true;
+                btnTouringDone.Enabled = true;
             }
         }
 
-        private void FillLabelDates(DateTime day, List<Control> ctrl)
+        //Saves to a global array the collection of Combo+TextBox for future loading of Tours
+        private void GroupLabelTextCombo(Control SingleTour, Control DoubleTour)
         {
-            IEnumerable<Control> queryControl = ctrl.OrderBy(c => c.Name);
+            groupTextCombo[] groupLabelTextComboTemp = new groupTextCombo[112];
 
-            foreach (Control control in queryControl)
-            {
-                var labels = control.Controls.OfType<Label>()
-                          .Where(c => c.Name.StartsWith("label"))
-                          .ToList();
+            int contLTC = 0;
 
-                IEnumerable<Label> queryLabel = labels.OrderBy(label => label.Name);
-
-                foreach (Label label in queryLabel)
-                {
-                    label.Text = day.ToString().Split(' ')[0];
-                    day = day.AddDays(1);
-                }
-            }
-
-        }
-
-        private void AddAutoCompleteToTextbox(List<Control> ctrl)
-        {
-            IEnumerable<Control> queryControl = ctrl.OrderBy(c => c.Name);
-
-            foreach (Control control in queryControl)
-            {
-                var txtboxes = control.Controls.OfType<TextBox>()
+            var textBoxs = SingleTour.Controls.OfType<TextBox>()
                           .Where(c => c.Name.StartsWith("text"))
+                          .OrderBy(c => c.Name)
                           .ToList();
 
-                IEnumerable<TextBox> querytxtBoxes = txtboxes.OrderBy(txtbox => txtbox.Name);
 
-                foreach (TextBox txtbox in querytxtBoxes)
-                {
-                    AutoCompleteStringCollection allowedTypes = new AutoCompleteStringCollection();
-                    foreach (KeyValuePair<string, int> pair in Helper.validCitySlots)
-                    {
-                        allowedTypes.Add(pair.Key);
-                    }
-                    txtbox.AutoCompleteCustomSource = allowedTypes;
-                    txtbox.AutoCompleteMode = AutoCompleteMode.Suggest;
-                    txtbox.AutoCompleteSource = AutoCompleteSource.CustomSource;
-                }
-            }
-        }
-
-        private void FillTimeComboBox(List<Control> ctrl)
-        {
-            IEnumerable<Control> queryControl = ctrl.OrderBy(c => c.Name);
-
-            foreach (Control control in queryControl)
+            foreach (TextBox txtBox in textBoxs)
             {
-                var cmbBoxes = control.Controls.OfType<ComboBox>()
-                          .Where(c => c.Name.StartsWith("metro"))
+                groupTextCombo ltc = new groupTextCombo();
+
+                ltc.TextBox = txtBox;
+                groupLabelTextComboTemp[contLTC] = ltc;
+
+                contLTC++;
+            }
+
+            var comboBoxs = SingleTour.Controls.OfType<ComboBox>()
+                          .Where(c => c.Name.StartsWith("combo"))
+                          .OrderBy(c => c.Name)
                           .ToList();
 
-                IEnumerable<ComboBox> querycmbBoxes = cmbBoxes.OrderBy(cmbBox => cmbBox.Name);
-
-                foreach (ComboBox cmbbox in querycmbBoxes)
-                {
-                    List<string> times = new List<string>();
-                    foreach (KeyValuePair<int, string> pair in Helper.validTimeSlots)
-                    {
-                        times.Add(pair.Value);
-                    }
-
-                    cmbbox.DataSource = times;
-                }
-            }
-        }
-
-        private void ChangeTime(string time, List<Control> listEntry)
-        {
-
-            foreach (Control control in listEntry)
+            contLTC = 0;
+            foreach (ComboBox cmbBox in comboBoxs)
             {
-                var cmbBoxs = control.Controls.OfType<ComboBox>()
-                          .Where(c => c.Name.StartsWith("metro"))
-                          .ToList();
+                groupLabelTextComboTemp[contLTC].ComboBox = cmbBox;
 
-                foreach (ComboBox cmbbox in cmbBoxs)
-                {
-                    cmbbox.SelectedItem = time;
-                }
-            }
-        }
-
-        private List<Week> AttributeWeekDay(List<Control> dates, List<Control> singleTour, List<Control> doubleTour = null)
-        {
-            List<Week> tourDays = new List<Week>();
-
-            IEnumerable<Control> queryDates = dates.OrderBy(c => c.Name);
-            IEnumerable<Control> querySingle = singleTour.OrderBy(c => c.Name);
-
-
-            foreach (Control control in queryDates)
-            {
-                int i = 0;
-
-                var labels = control.Controls.OfType<Label>()
-                          .Where(c => c.Name.StartsWith("label"))
-                          .ToList();
-
-                IEnumerable<Label> queryLabel = labels.OrderBy(label => label.Name);
-
-                Week week = new Week();
-
-
-                foreach (Label label in queryLabel)
-                {
-                    Day day = new Day();
-                    day.Date = label.Text;
-                    week.Days[i] = day;
-                    i++;
-                }
-                tourDays.Add(week);
+                contLTC++;
             }
 
-            int j = 0;
-            foreach (Control control in querySingle)
-            {
-                var textBoxs = control.Controls.OfType<TextBox>()
+            textBoxs = DoubleTour.Controls.OfType<TextBox>()
                           .Where(c => c.Name.StartsWith("text"))
+                          .OrderBy(c => c.Name)
                           .ToList();
 
-                var comboBoxs = control.Controls.OfType<ComboBox>()
-                          .Where(c => c.Name.StartsWith("metro"))
+            contLTC = 56;
+            foreach (TextBox txtBox in textBoxs)
+            {
+                groupTextCombo ltc = new groupTextCombo();
+
+                ltc.TextBox = txtBox;
+                groupLabelTextComboTemp[contLTC] = ltc;
+
+                contLTC++;
+            }
+
+            comboBoxs = DoubleTour.Controls.OfType<ComboBox>()
+                          .Where(c => c.Name.StartsWith("combo"))
+                          .OrderBy(c => c.Name)
                           .ToList();
 
-                IEnumerable<TextBox> queryText = textBoxs.OrderBy(textBox => textBox.Name);
-                IEnumerable<ComboBox> queryCombo = comboBoxs.OrderBy(comboBox => comboBox.Name);
-
-
-                int i = 0;
-
-                foreach (TextBox txtBox in queryText)
-                {
-                    tourDays[j].Days[i].City1 = txtBox.Text.ToString();
-                    i++;
-                }
-
-                i = 0;
-
-                foreach (ComboBox comboBox in queryCombo)
-                {
-                    tourDays[j].Days[i].Time1 = comboBox.SelectedItem.ToString();
-                    i++;
-                }
-
-                j++;
-            }
-
-            j = 0;
-            if (doubleTour != null)
+            contLTC = 56;
+            foreach (ComboBox cmbBox in comboBoxs)
             {
-                IEnumerable<Control> queryDouble = doubleTour.OrderBy(c => c.Name);
+                groupLabelTextComboTemp[contLTC].ComboBox = cmbBox;
 
-                foreach (Control control in queryDouble)
-                {
-                    var textBoxs = control.Controls.OfType<TextBox>()
-                              .Where(c => c.Name.StartsWith("text"))
-                              .ToList();
-
-                    var comboBoxs = control.Controls.OfType<ComboBox>()
-                              .Where(c => c.Name.StartsWith("metro"))
-                              .ToList();
-
-                    IEnumerable<TextBox> queryText = textBoxs.OrderBy(textBox => textBox.Name);
-                    IEnumerable<ComboBox> queryCombo = comboBoxs.OrderBy(comboBox => comboBox.Name);
-
-
-                    int i = 0;
-
-                    foreach (TextBox txtBox in queryText)
-                    {
-                        tourDays[j].Days[i].City2 = txtBox.Text.ToString();
-                        i++;
-                    }
-
-                    i = 0;
-
-                    foreach (ComboBox comboBox in queryCombo)
-                    {
-                        tourDays[j].Days[i].Time2 = comboBox.SelectedItem.ToString();
-                        i++;
-                    }
-
-                    j++;
-
-                }
+                contLTC++;
             }
 
-            return tourDays;
+            groupTextCombos = groupLabelTextComboTemp;
+
         }
 
-        private List<Week> ConvertTourDayToDay(List<TourDay> tourDay)
+        private List<TourDay> GetTourDays(Control Dates, Control SingleTour, Control DoubleTour)
         {
-            List<Week> outputList = new List<Week>();
-            int cntTourDay = 0;
-            int cntDay = 0;
+            TourDay[] arrayTD;
+            List<TourDay> listTD;
 
-            for (int i = 0; i < 8; i++)
+            if (checkedListBoxTourType.SelectedItem.ToString().Equals("Double"))
+                arrayTD = AssignTourDays(Dates, SingleTour).Concat(AssignTourDays(Dates, DoubleTour)).ToArray();
+            else
+                arrayTD = AssignTourDays(Dates, SingleTour);
+
+            listTD = arrayTD.OrderBy(c => DateTime.Parse(c.dateTD + " " + c.timeTD))
+                .ToList();
+
+
+            return listTD;
+        }
+        private TourDay[] AssignTourDays(Control Dates, Control Tour)
+        {
+            TourDay[] arrayTD = new TourDay[56];
+
+
+            var labels = Dates.Controls.OfType<Label>()
+                          .Where(c => c.Name.StartsWith("label"))
+                          .OrderBy(c => c.Name)
+                          .ToList();
+
+            int i = 0;
+
+            //Saves Day
+            foreach (Label label in labels)
             {
-                Week week = new Week();
-                foreach (Day day in week.Days)
-                {
-                    //Checks if the Tour is using a Single or Double setup
-
-                    Day d = new Day
-                    {
-                        Date = tourDay[cntTourDay].Day,
-                        City1 = tourDay[cntTourDay].City,
-                        Time1 = tourDay[cntTourDay].Time
-                    };
-
-
-                    if (tourType.Equals("Double"))
-                    {
-                        d.City2 = tourDay[cntTourDay + 56].City;
-                        d.Time2 = tourDay[cntTourDay + 56].Time;
-                    }
-
-                    cntTourDay++;
-                    week.Days[cntDay] = d;
-                    cntDay++;
-                }
-                cntDay = 0;
-                outputList.Add(week);
-
+                TourDay tourDay = new TourDay();
+                tourDay.dateTD = label.Text;
+                arrayTD[i] = tourDay;
+                i++;
             }
 
-            return outputList;
+
+            var textBoxs = Tour.Controls.OfType<TextBox>()
+                          .Where(c => c.Name.StartsWith("text"))
+                          .OrderBy(c => c.Name)
+                          .ToList();
+            i = 0;
+            //Saves City
+            foreach (TextBox txtBox in textBoxs)
+            {
+                if (!String.IsNullOrEmpty(txtBox.Text))
+                {
+                    arrayTD[i].cityTD = txtBox.Text;
+                    arrayTD[i].textBoxNameTD = txtBox.Name;
+                }
+
+                i++;
+            }
+
+            var comboBoxs = Tour.Controls.OfType<ComboBox>()
+                          .Where(c => c.Name.StartsWith("combo"))
+                          .OrderBy(c => c.Name)
+                          .ToList();
+            i = 0;
+            //Saves Time
+            foreach (ComboBox cmbBox in comboBoxs)
+            {
+                if (arrayTD[i].cityTD != null)
+                {
+                    arrayTD[i].timeTD = cmbBox.SelectedItem.ToString();
+                }
+
+                i++;
+            }
+
+            TourDay[] arrayReturn;
+            arrayReturn = arrayTD.Where(td => !String.IsNullOrEmpty(td.cityTD)).ToArray();
+
+            return arrayReturn;
         }
 
-        private void FillControlsFromDB(List<Control> singleTour, List<Control> doubleTour)
+        private void FillControlsFromDB(groupTextCombo[] Controls, int year, int idBand)
         {
-            tourType = SqliteDataAccess.GetTour(year, Int32.Parse(band.Id), idutilizador).Type;
+            var tourType = SqliteDataAccess.GetTour(year, band.idBand, idutilizador).typeTour;
 
             if (tourType.Equals("Single"))
             {
                 checkedListBoxTourType.SetSelected(0, true);
                 checkedListBoxTourType.SetItemChecked(0, true);
-                DisableControlsBasedOnTourType();
+                EnableControlsBasedOnTourType();
             }
             else if (tourType.Equals("Double"))
             {
                 checkedListBoxTourType.SetSelected(1, true);
                 checkedListBoxTourType.SetItemChecked(1, true);
-                DisableControlsBasedOnTourType();
-            }
-            List<Week> week = new List<Week>();
-            List<TourDay> td = SqliteDataAccess.GetTourDays(year, Int32.Parse(band.Id));
-            if(td.Count > 0 )
-            {
-                //td = td.OrderBy(day => day.Day).ToList();
-                week = ConvertTourDayToDay(td);
+                EnableControlsBasedOnTourType();
             }
 
-            IEnumerable<Control> querySingle = singleTour.OrderBy(c => c.Name);
+            List<TourDay> tds = SqliteDataAccess.GetTourDays(year, idBand);
 
-            int j = 0;
-            foreach (Control control in querySingle)
+            foreach(TourDay td in tds)
             {
-                var textBoxs = control.Controls.OfType<TextBox>()
-                          .Where(c => c.Name.StartsWith("text"))
-                          .ToList();
-
-                var comboBoxs = control.Controls.OfType<ComboBox>()
-                          .Where(c => c.Name.StartsWith("metro"))
-                          .ToList();
-
-                IEnumerable<TextBox> queryText = textBoxs.OrderBy(textBox => textBox.Name);
-                IEnumerable<ComboBox> queryCombo = comboBoxs.OrderBy(comboBox => comboBox.Name);
-
-
-                int i = 0;
-
-                foreach (TextBox txtBox in queryText)
+                foreach(groupTextCombo tc in Controls)
                 {
-                    txtBox.Text = week[j].Days[i].City1;
-                        i++;
-                }
-
-                i = 0;
-
-                foreach (ComboBox comboBox in queryCombo)
-                {
-                    comboBox.SelectedItem = week[j].Days[i].Time1;
-                        i++;
-                }
-
-                j++;
-            }
-
-            j = 0;
-            if (tourType.Equals("Double"))
-            {
-                IEnumerable<Control> queryDouble = doubleTour.OrderBy(c => c.Name);
-
-                foreach (Control control in queryDouble)
-                {
-                    var textBoxs = control.Controls.OfType<TextBox>()
-                              .Where(c => c.Name.StartsWith("text"))
-                              .ToList();
-
-                    var comboBoxs = control.Controls.OfType<ComboBox>()
-                              .Where(c => c.Name.StartsWith("metro"))
-                              .ToList();
-
-                    IEnumerable<TextBox> queryText = textBoxs.OrderBy(textBox => textBox.Name);
-                    IEnumerable<ComboBox> queryCombo = comboBoxs.OrderBy(comboBox => comboBox.Name);
-
-
-
-                    int i = 0;
-
-                    foreach (TextBox txtBox in queryText)
+                    if (td.textBoxNameTD.Equals(tc.TextBox.Name))
                     {
-                        txtBox.Text = week[j].Days[i].City2;
-                        i++;
+                        tc.TextBox.Text = td.cityTD;
+                        tc.ComboBox.SelectedItem = td.timeTD;
+                        break;
                     }
-
-                    i = 0;
-
-                    foreach (ComboBox comboBox in queryCombo)
-                    {
-                        comboBox.SelectedItem = week[j].Days[i].Time2;
-                        i++;
-                    }
-
-                    j++;
-
                 }
             }
         }
 
-        private void DisableControlsBasedOnTourType()
+        private void ChangeTime(string time, Control Ctrl)
         {
-            if (checkedListBoxTourType.SelectedItem.ToString().Equals("Double"))
+            var cmbBoxs = Ctrl.Controls.OfType<ComboBox>()
+                .ToList();
+
+            foreach (ComboBox cmbBox in cmbBoxs)
             {
-                tourType = "Double";
-                foreach (Control ctrl in tableLayoutPanel1.Controls)
-                {
-                    if (ctrl.Name == "tableLayoutPanel11")
-                    {
-                        foreach (Control Children in ctrl.Controls)
-                        {
-                            if (Children.Name == "tableLayoutPanel38" || Children.Name == "tableLayoutPanel39")
-                            {
-                                Children.Enabled = true;
-                            }
-                        }
-                    }
-                }
-
-                foreach (TableLayoutPanel tblpnl in layoutListDoubleTour)
-                {
-                    tblpnl.Enabled = true;
-                }
+                cmbBox.SelectedItem = time;
             }
-            else
-            {
-                tourType = "Single";
-                foreach (Control ctrl in tableLayoutPanel1.Controls)
-                {
-                    if (ctrl.Name == "tableLayoutPanel11")
-                    {
-                        foreach (Control Children in ctrl.Controls)
-                        {
-                            if (Children.Name == "tableLayoutPanel38")
-                            {
-                                Children.Enabled = true;
-                            }
-                            if (Children.Name == "tableLayoutPanel39")
-                            {
-                                Children.Enabled = false;
-                            }
-                        }
-                    }
-                }
-
-                foreach (TableLayoutPanel tblpnl in layoutListDoubleTour)
-                {
-                    tblpnl.Enabled = false;
-                }
-            }
-
-            foreach (Control ctrl in tableLayoutPanel1.Controls)
-            {
-                if (ctrl.Name == "tableLayoutPanel12")
-                {
-                    ctrl.Enabled = true;
-                }
-
-            }
-        }
-        private void checkedListBoxTourType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DisableControlsBasedOnTourType();
         }
 
         private void checkedListBoxTourType_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             Helper.SingleCheckBoxSelection(checkedListBoxTourType, e);
+        }
 
-            foreach (Control ctrl in tableLayoutPanel1.Controls)
-            {
-                ctrl.Enabled = true;
-            }
+        private void checkedListBoxTourType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            EnableControlsBasedOnTourType();
         }
 
         private void checkedListBoxTimeSingle_SelectedIndexChanged(object sender, EventArgs e)
@@ -533,27 +347,32 @@ namespace MissingC
             switch (c)
             {
                 case "12:00":
-                    ChangeTime("12:00", layoutListSingleTour);
+                    ChangeTime("12:00", tableLayoutPanelSingle);
                     break;
                 case "14:00":
-                    ChangeTime("14:00", layoutListSingleTour);
+                    ChangeTime("14:00", tableLayoutPanelSingle);
                     break;
                 case "16:00":
-                    ChangeTime("16:00", layoutListSingleTour);
+                    ChangeTime("16:00", tableLayoutPanelSingle);
                     break;
                 case "18:00":
-                    ChangeTime("18:00", layoutListSingleTour);
+                    ChangeTime("18:00", tableLayoutPanelSingle);
                     break;
                 case "20:00":
-                    ChangeTime("20:00", layoutListSingleTour);
+                    ChangeTime("20:00", tableLayoutPanelSingle);
                     break;
                 case "22:00":
-                    ChangeTime("22:00", layoutListSingleTour);
+                    ChangeTime("22:00", tableLayoutPanelSingle);
                     break;
                 default:
                     break;
 
             }
+        }
+
+        private void checkedListBoxTimeSingle_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            Helper.SingleCheckBoxSelection(checkedListBoxTimeSingle, e);
         }
 
         private void checkedListBoxTimeDouble_SelectedIndexChanged(object sender, EventArgs e)
@@ -568,22 +387,22 @@ namespace MissingC
             switch (c)
             {
                 case "12:00":
-                    ChangeTime("12:00", layoutListDoubleTour);
+                    ChangeTime("12:00", tableLayoutPanelDouble);
                     break;
                 case "14:00":
-                    ChangeTime("14:00", layoutListDoubleTour);
+                    ChangeTime("14:00", tableLayoutPanelDouble);
                     break;
                 case "16:00":
-                    ChangeTime("16:00", layoutListDoubleTour);
+                    ChangeTime("16:00", tableLayoutPanelDouble);
                     break;
                 case "18:00":
-                    ChangeTime("18:00", layoutListDoubleTour);
+                    ChangeTime("18:00", tableLayoutPanelDouble);
                     break;
                 case "20:00":
-                    ChangeTime("20:00", layoutListDoubleTour);
+                    ChangeTime("20:00", tableLayoutPanelDouble);
                     break;
                 case "22:00":
-                    ChangeTime("22:00", layoutListDoubleTour);
+                    ChangeTime("22:00", tableLayoutPanelDouble);
                     break;
                 default:
                     break;
@@ -591,231 +410,96 @@ namespace MissingC
             }
         }
 
-        private void checkedListBoxTimeSingle_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            Helper.SingleCheckBoxSelection(checkedListBoxTimeSingle, e);
-        }
-
         private void checkedListBoxTimeDouble_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             Helper.SingleCheckBoxSelection(checkedListBoxTimeDouble, e);
         }
-
-
-
-        private void btnCheck_Click(object sender, EventArgs e)
-        {
-
-            List<Control> layoutListAll = layoutListSingleTour.Concat(layoutListDoubleTour).ToList();
-
-            IEnumerable<Control> queryControl = layoutListAll.OrderBy(c => c.Name);
-
-            foreach (Control control in queryControl)
+        
+        private void btnTouringCheck_Click(object sender, EventArgs e)
+        {    
+            foreach(groupTextCombo tc in groupTextCombos)
             {
-                var txtboxes = control.Controls.OfType<TextBox>()
-                          .Where(c => c.Name.StartsWith("text"))
-                          .ToList();
+                tc.TextBox.ForeColor = Color.Black;
+            }        
 
-                IEnumerable<TextBox> querytxtBoxes = txtboxes.OrderBy(txtbox => txtbox.Name);
+            List<TourDay> tdays;
 
-                foreach (TextBox txtbox in querytxtBoxes)
+            tdays = GetTourDays(tableLayoutPanelDates, tableLayoutPanelSingle, tableLayoutPanelDouble);
+
+            List<string> colorRed = new List<string>();
+
+            foreach(TourDay td in tdays)
+            {
+                if (SqliteDataAccess.CheckTourDay(td))
                 {
-                    txtbox.ForeColor = Color.Black;
+                    colorRed.Add(td.textBoxNameTD);
                 }
             }
 
-            List<Week> calendar = new List<Week>();
-
-            if (checkedListBoxTourType.GetItemCheckState(0) == CheckState.Checked)
+            foreach(string cr in colorRed)
             {
-                calendar = AttributeWeekDay(layoutListDates, layoutListSingleTour);
-            }
-            else if (checkedListBoxTourType.GetItemCheckState(1) == CheckState.Checked)
-            {
-                calendar = AttributeWeekDay(layoutListDates, layoutListSingleTour, layoutListDoubleTour);
-            }
-
-            List<TourDay> Calendar = new List<TourDay>();
-
-            foreach (Week week in calendar)
-            {
-                foreach (Day day in week.Days)
+                foreach (groupTextCombo tc in groupTextCombos)
                 {
-                    TourDay tourDay = new TourDay();
-                    tourDay.City = day.City1;
-                    tourDay.Day = day.Date;
-                    tourDay.Time = day.Time1;
-                    tourDay.UserId = idutilizador;
-
-                    Calendar.Add(tourDay); 
-                }
-            }
-
-            if (checkedListBoxTourType.GetItemCheckState(1) == CheckState.Checked) //Checks if Double option is picked in ListBoxTourType
-            {
-                foreach (Week week in calendar)
-                {
-                    foreach (Day day in week.Days)
+                    if (cr.Equals(tc.TextBox.Name))
                     {
-                        TourDay tourDay = new TourDay();
-                        tourDay.City = day.City2;
-                        tourDay.Day = day.Date;
-                        tourDay.Time = day.Time2;
-                        tourDay.UserId = idutilizador;
-
-                        Calendar.Add(tourDay);
-                    }
-                }
-            }
-
-            //Calendar.OrderBy(c => c.Day);
-
-            List<bool> temp = new List<bool>();
-            foreach (TourDay day in Calendar) //Checks if day is already on the database
-            {
-                if (SqliteDataAccess.CheckTourDay(day) && !String.IsNullOrEmpty(day.City))
-                {
-                    temp.Add(true);
-                }
-                else
-                {
-                    temp.Add(false);
-                }
-            }
-
-            
-            int i = 0;
-
-            foreach (Control control in layoutListSingleTour)
-            {
-                var txtboxes = control.Controls.OfType<TextBox>()
-                          .Where(c => c.Name.StartsWith("text"))
-                          .ToList();
-
-                IEnumerable<TextBox> querytxtBoxes = txtboxes.OrderBy(txtbox => txtbox.Name);
-
-
-                foreach (TextBox txtbox in querytxtBoxes)
-                {
-                    if (temp[i])
-                    {
-                        txtbox.ForeColor = Color.Red;
-                    }
-
-                    i++;
-                }
-            }
-            
-            if (checkedListBoxTourType.GetItemCheckState(1) == CheckState.Checked) //If Tour Type Double
-            {
-                //i = 0;
-
-                foreach (Control control in layoutListDoubleTour)
-                {
-                    var txtboxes = control.Controls.OfType<TextBox>()
-                              .Where(c => c.Name.StartsWith("text"))
-                              .ToList();
-
-                    IEnumerable<TextBox> querytxtBoxes = txtboxes.OrderBy(txtbox => txtbox.Name);
-
-
-                    foreach (TextBox txtbox in querytxtBoxes)
-                    {
-                        if (temp[i])
-                        {
-                            txtbox.ForeColor = Color.Red;
-                        }
-
-                        i++;
+                        tc.TextBox.ForeColor = Color.Red;
+                        break;
                     }
                 }
             }
 
 
         }
-
-        private void btnDone_Click(object sender, EventArgs e)
+        private void btnTouringDone_Click(object sender, EventArgs e)
         {
             Tour tour = new Tour();
+            List<TourDay> tdays;
 
-            if (!edit)
+            if (edit)
             {
-                SqliteDataAccess.SaveTour(year, tourType, Int32.Parse(band.Id), idutilizador);
+                tour = SqliteDataAccess.GetTour(year, band.idBand, idutilizador);
+                tour.typeTour = checkedListBoxTourType.SelectedItem.ToString();
+                SqliteDataAccess.UpdateTour(tour);
             }
             else
             {
-                tour = SqliteDataAccess.GetTour(year, Int32.Parse(band.Id), idutilizador);
-                tour.Year = year;
-                tour.Type = tourType;
-                SqliteDataAccess.UpdateTour(tour);
+                SqliteDataAccess.SaveTour(year, checkedListBoxTourType.SelectedItem.ToString(), band.idBand, idutilizador);
             }
+
             int TourID = -1;
 
-            TourID = SqliteDataAccess.GetTour(year, Int32.Parse(band.Id), idutilizador).Id;
+            TourID = SqliteDataAccess.GetTour(year, band.idBand, idutilizador).idTour;
 
             if (TourID != -1)
             {
-                List<Week> calendar = new List<Week>();
+                tdays = GetTourDays(tableLayoutPanelDates, tableLayoutPanelSingle, tableLayoutPanelDouble);
 
-                if (checkedListBoxTourType.GetItemCheckState(0) == CheckState.Checked)
+                //Adds TourID and UserID to TourDays
+                foreach(TourDay td in tdays)
                 {
-                    calendar = AttributeWeekDay(layoutListDates, layoutListSingleTour);
-                }
-                else if (checkedListBoxTourType.GetItemCheckState(1) == CheckState.Checked)
-                {
-                    calendar = AttributeWeekDay(layoutListDates, layoutListSingleTour, layoutListDoubleTour);
+                    td.idTourTD = TourID;
+                    td.idUserTD = idutilizador;
                 }
 
-                List<TourDay> Calendar = new List<TourDay>();
-
-                foreach (Week week in calendar)
-                {
-                    foreach (Day day in week.Days)
-                    {
-                        TourDay tourDay = new TourDay();
-                        tourDay.City = day.City1;
-                        tourDay.Day = day.Date;
-                        tourDay.Time = day.Time1;
-                        tourDay.UserId = idutilizador;
-                        tourDay.TourId = TourID;
-
-                        Calendar.Add(tourDay);
-                    }
-                }
-                if (checkedListBoxTourType.GetItemCheckState(1) == CheckState.Checked) //Checks if Double option is picked in ListBoxTourType
-                {
-                    foreach (Week week in calendar)
-                    {
-                        foreach (Day day in week.Days)
-                        {
-                            TourDay tourDay = new TourDay();
-                            tourDay.City = day.City2;
-                            tourDay.Day = day.Date;
-                            tourDay.Time = day.Time2;
-                            tourDay.UserId = idutilizador;
-                            tourDay.TourId = TourID;
-
-                            Calendar.Add(tourDay);
-                        }
-                    }
-                }
-
-                Calendar.OrderBy(c => c.Day);
-
+                //Saves TourDays
                 if (edit)
                 {
-                    SqliteDataAccess.DeleteTourDays(tour.Id);
-                    SqliteDataAccess.SaveTourDays(Calendar);
+                    SqliteDataAccess.DeleteTourDays(tour.idTour);
+                    SqliteDataAccess.SaveTourDays(tdays);
                 }
                 else
                 {
-                    SqliteDataAccess.SaveTourDays(Calendar);
+                    SqliteDataAccess.SaveTourDays(tdays);
                 }
-                    
-                    
 
                 this.Close();
             }
         }
+    }
+
+    public class groupTextCombo
+    {
+        public TextBox TextBox { get; set; }
+        public ComboBox ComboBox { get; set; }
     }
 }
