@@ -8,11 +8,12 @@ namespace MissingC
 {
     class TourDay
     {
-        public string Id { get; set; }
-        public string Day { get; set; }
-        public string Time { get; set; }
-        public string City { get; set; }
-        public int TourId { get; set; }
-        public int UserId { get; set; }
+        public int idTD { get; set; }
+        public string dateTD { get; set; }
+        public string timeTD { get; set; }
+        public string cityTD { get; set; }
+        public string textBoxNameTD { get; set; }
+        public int idTourTD { get; set; } //Foreign Key
+        public int idUserTD { get; set; } //Foreign Key
     }
 }

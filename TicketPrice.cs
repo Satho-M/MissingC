@@ -8,10 +8,10 @@ namespace MissingC
 {
     public class TicketPrice
     {
-        public string Id { get; set; }
-        public string Popularity { get; set; }
-        public string Price { get; set; }
-        public string UserId { get; set; }
-        public string BandId { get; set; }
+        public int idTicket { get; set; }
+        public string popTicket { get; set; }
+        public string priceTicket { get; set; }
+        public int idUserTicket { get; set; } //Foreign Key
+        public int idBandTicket { get; set; } //Foreign Key
     }
 }

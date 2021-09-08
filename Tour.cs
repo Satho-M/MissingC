@@ -8,10 +8,10 @@ namespace MissingC
 {
     class Tour
     {
-        public int Id { get; set; }
-        public int Year { get; set; }
-        public string Type { get; set; }
-        public int idBand { get; set; }
-        public int idUser { get; set; }
+        public int idTour { get; set; }
+        public int yearTour { get; set; }
+        public string typeTour { get; set; }
+        public int idBandTour { get; set; } //Foreign Key
+        public int idUserTour { get; set; } //Foreign Key
     }
 }

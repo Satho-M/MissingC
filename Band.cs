@@ -8,12 +8,12 @@ namespace MissingC
 {
     public class Band
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public int Rider { get; set; }
-        public int ArtistCut { get; set; }
-        public string LastInvite { get; set; }
-        public string ChainId { get; set; }
-        public string UserId { get; set; }
+        public int idBand { get; set; }
+        public string nameBand { get; set; }
+        public int riderBand { get; set; }
+        public int artCutBand { get; set; }
+        public string lastInviteBand { get; set; }
+        public string idChainBand { get; set; } //Foreign Key
+        public int idUserBand { get; set; } //Foreign Key
     }
 }
