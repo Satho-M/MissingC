@@ -159,7 +159,7 @@ namespace MissingC
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute("Update tbl_Chain Set nameChain=@chainName, Where idChain = @chainId", new { chainName = chain.nameChain, chainId = chain.idChain });
+                cnn.Execute("Update tbl_Chain Set nameChain=@chainName Where idChain = @chainId", new { chainName = chain.nameChain, chainId = chain.idChain });
             }
         }
 
@@ -178,6 +178,15 @@ namespace MissingC
                 cnn.Execute("Update tbl_Band Set nameBand=@nameBand, riderBand=@riderBand, artCutBand=@artCutBand, lastInviteBand=@lastInviteBand Where idBand = @idBand", new { band.nameBand, band.riderBand, band.artCutBand, band.lastInviteBand, band.idBand });
             }
         }
+
+        public static void ResetLastInviteBand(Band band)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                cnn.Execute("Update tbl_Band Set lastInviteBand = NULL Where idBand = @idBand", new { band.idBand });
+            }
+        }
+
         public static Band LoadBand(int idBand)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
