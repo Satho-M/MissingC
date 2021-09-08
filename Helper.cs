@@ -9,6 +9,11 @@ namespace MissingC
 {
     public static class Helper
     {
+        public static SortedDictionary<int, string> Scoring = new SortedDictionary<int, string>
+            { { 0, "truly abysmal" }, { 1, "abysmal" }, { 2, "bottom dwelling" }, { 3, "horrendous" }, { 4, "dreadful" }, { 5, "terrible" },
+            { 6, "poor" }, { 7, "below average" }, { 8, "mediocre" }, { 9, "above average" }, { 10, "decent" }, { 11, "nice" }, { 12, "pleasant" },
+            { 13, "good" }, { 14, "sweet" }, { 15, "splendid" }, { 16, "awesome" }, { 17, "great" }, { 18, "terrific" }, { 19, "wonderful" },
+            { 20, "incredible" }, { 21, "perfect" }, { 22, "revolutionary" }, { 23, "mind melting" }, { 24, "earth shaking" }, { 25, "GOD SMACKING" }, { 26, "GOD SMACKINGLY GLORIOUS" } };
         public static SortedDictionary<int, string> validTimeSlots = new SortedDictionary<int, string>
             { { 0, "12:00" }, { 1, "14:00" }, { 2, "16:00" }, { 3, "18:00" }, { 4, "20:00" }, { 5, "22:00" } }; //PPM Time Slots for Shows and respective IDs
         public static SortedDictionary<string, int> validCitySlots = new SortedDictionary<string, int>
@@ -52,6 +57,7 @@ namespace MissingC
 
             return (firstPPMDate.AddDays(DiferenceYear * 56));
         }
+        
 
     }
 }
