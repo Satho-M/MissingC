@@ -19,6 +19,8 @@
 
 2. Unzip the folder and run the `MissingC.exe`
 
+**Be aware: The program might take some time to start the first time you run it.**
+
 ## User Guide
 
 Before creating a new Chain, use the button `Update Clubs` for your clubs to show up.
