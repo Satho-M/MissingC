@@ -38,7 +38,7 @@ namespace MissingC
             try
             {
                 var playwright = await Playwright.CreateAsync();
-                this.browser = await playwright.Chromium.LaunchAsync(headless: false);
+                this.browser = await playwright.Chromium.LaunchAsync(headless: true);
                 this.page = await browser.NewPageAsync();
 
 
