@@ -38,7 +38,7 @@ namespace MissingC
             try
             {
                 var playwright = await Playwright.CreateAsync();
-                this.browser = await playwright.Chromium.LaunchAsync(headless: true);
+                this.browser = await playwright.Chromium.LaunchAsync(headless: false);
                 this.page = await browser.NewPageAsync();
 
 
@@ -149,7 +149,9 @@ namespace MissingC
             Regex regexpage = new Regex(@"^background: url\('([^']*)'\) no-repeat;$", RegexOptions.Compiled);
 
             List<Character> characters = new List<Character>();
-            await page.WaitForLoadStateAsync();
+
+            await page.WaitForSelectorAsync("#ctl00_ctl08_ucMenu_lnkChooseCharacter");
+
             var characterBoxs = await page.QuerySelectorAllAsync(".box.clear");
             foreach (var characterBox in characterBoxs)
             {
@@ -239,21 +241,37 @@ namespace MissingC
         public async Task<Dictionary<string, string>> GetUserCompanies()
         {
             await page.GoToAsync("https://" + this.serverURL + "/World/Popmundo.aspx/ChooseCompany");
-
+            
             Dictionary<string, string> CompaniesDict = new Dictionary<string, string>();
 
-            var companies = await page.QuerySelectorAllAsync("#tablecompanies > tbody > tr");
+            if (page.Url.Contains("/ChooseCompany"))
+            {    
+                var companies = await page.QuerySelectorAllAsync("#tablecompanies > tbody > tr");
 
-            foreach (var company in companies)
+                foreach (var company in companies)
+                {
+                    var td = await company.QuerySelectorAsync("td > a");
+
+                    string id = await td.GetAttributeAsync("href");
+                    id = id.Split('/')[4].Trim('[');
+                    string name = await td.GetInnerTextAsync();
+
+                    CompaniesDict.Add(id, name);
+                }
+            }
+            else if(page.Url.Contains("/Company/"))
             {
-                var td = await company.QuerySelectorAsync("td > a");
+                var singleCompanyID = page.Url.Split('/');
+                var id = singleCompanyID[singleCompanyID.Length - 1];
 
-                string id = await td.GetAttributeAsync("href");
-                id = id.Split('/')[4].Trim('[');
-                string name = await td.GetInnerTextAsync();
+                var singleCompanyName = await page.QuerySelectorAsync("h1");
+                var name = await singleCompanyName.GetInnerTextAsync();
 
                 CompaniesDict.Add(id, name);
             }
+
+
+            
             return CompaniesDict;
         }
 
