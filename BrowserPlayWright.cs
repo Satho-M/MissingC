@@ -38,7 +38,7 @@ namespace MissingC
             try
             {
                 var playwright = await Playwright.CreateAsync();
-                this.browser = await playwright.Chromium.LaunchAsync(headless: true);
+                this.browser = await playwright.Chromium.LaunchAsync(headless: false);
                 this.page = await browser.NewPageAsync();
 
 
@@ -379,6 +379,8 @@ namespace MissingC
         }
         public async Task<Status> SendInvitesClick()
         {
+            RandomSleep();
+
             var buttonInvite = await page.QuerySelectorAsync("#ctl00_cphLeftColumn_ctl01_btnInvite");
             await buttonInvite.ClickAsync();
 
@@ -400,6 +402,12 @@ namespace MissingC
             {
                 return Status.Failed;
             }
+        }
+
+        public void RandomSleep()
+        {
+            Random rd = new Random();
+            Thread.Sleep(rd.Next(100, 2000));
         }
     }
 }
