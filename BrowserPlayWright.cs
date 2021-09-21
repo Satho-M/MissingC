@@ -238,98 +238,37 @@ namespace MissingC
             this.gameYear = await getIngameYear.GetAttributeAsync("value");
         }
 
-        public async Task<Dictionary<string, string>> GetUserCompanies()
+        public async Task<List<Club>> GetClubs()
         {
-            await page.GoToAsync("https://" + this.serverURL + "/World/Popmundo.aspx/ChooseCompany");
+            await page.GoToAsync("https://" + serverURL + "/World/Popmundo.aspx/Artist/InviteArtist/1801455");
+
+            var infoClubs = await page.QuerySelectorAllAsync("#ctl00_cphLeftColumn_ctl01_ddlVenues option");
+
+            Regex regexNameCity = new Regex(@"(?<ClubName>^(.+))\((?<ClubCity>.*)\)");
+
+            List<Club> clubs = new List<Club>();
+
+            foreach (var info in infoClubs)
+            {
+                var value = await info.GetAttributeAsync("value");
             
-            Dictionary<string, string> CompaniesDict = new Dictionary<string, string>();
-
-            if (page.Url.Contains("/ChooseCompany"))
-            {    
-                var companies = await page.QuerySelectorAllAsync("#tablecompanies > tbody > tr");
-
-                foreach (var company in companies)
+                if (!value.Equals("0")) //Skips the selected/empty option 
                 {
-                    var td = await company.QuerySelectorAsync("td > a");
-
-                    string id = await td.GetAttributeAsync("href");
-                    id = id.Split('/')[4].Trim('[');
-                    string name = await td.GetInnerTextAsync();
-
-                    CompaniesDict.Add(id, name);
-                }
-            }
-            else if(page.Url.Contains("/Company/"))
-            {
-                var singleCompanyID = page.Url.Split('/');
-                var id = singleCompanyID[singleCompanyID.Length - 1];
-
-                var singleCompanyName = await page.QuerySelectorAsync("h1");
-                var name = await singleCompanyName.GetInnerTextAsync();
-
-                CompaniesDict.Add(id, name);
-            }
-
-
-            
-            return CompaniesDict;
-        }
-
-        public async Task<List<string>> GetUserLocalesID(Dictionary<string, string> companies)
-        {
-            List<string> LocalID = new List<string>();
-            foreach (KeyValuePair<string, string> company in companies)
-            {
-                await page.GoToAsync("https://" + serverURL + "/World/Popmundo.aspx/Company/Locales/" + company.Key);
-
-                var tableLocales = await page.QuerySelectorAllAsync("#tablelocales > tbody > tr");
-
-                foreach (var local in tableLocales)
-                {
-                    var td = await local.QuerySelectorAsync("td > a");
-
-                    string id = await td.GetAttributeAsync("href");
-                    id = id.Split('/')[id.Split('/').Length - 1];
-                    LocalID.Add(id);
-                }
-            }
-            return LocalID;
-        }
-
-        public async Task<List<Club>> GetUserClubs(List<string> LocalIDs)
-        {
-            List<Club> ClubList = new List<Club>();
-
-            foreach (var id in LocalIDs)
-            {
-                await page.GoToAsync("https://" + serverURL + "/World/Popmundo.aspx/Locale/Management/" + id);
-                var localDetailsTemp = await page.QuerySelectorAllAsync("#ctl00_cphLeftColumn_ctl00_divBasicInfo > table.width100 > tbody > tr");
-                var localDetails = localDetailsTemp.ToArray();
-
-                var clubType = await localDetails[0].GetInnerTextAsync();
-
-                if (clubType.Contains("Club"))
-                {
-                    var nameTemp = await page.QuerySelectorAsync("#ctl00_cphLeftColumn_ctl01_divLocaleInfo > .localebox > h2");
-                    var name = await nameTemp.GetInnerTextAsync();
-                    name = name.Trim();
-
-                    var cityTemp = await localDetails[3].QuerySelectorAsync("#ctl00_cphLeftColumn_ctl00_lnkLocaleCity");
-                    var city = await cityTemp.GetInnerTextAsync();
+                    Match m = regexNameCity.Match(await info.GetInnerTextAsync());
 
                     Club c = new Club
                     {
-                        idClub = id,
-                        nameClub = name,
-                        cityClub = city,
+                        nameClub = m.Groups["ClubName"].Value,
+                        cityClub = m.Groups["ClubCity"].Value,
+                        idClub = value,
                         idUserClub = this.userID
                     };
 
-                    ClubList.Add(c);
+                    clubs.Add(c);
                 }
             }
 
-            return ClubList;
+            return clubs;
         }
 
         public async Task<Dictionary<string, string>> CheckBandPopularity(Band band)

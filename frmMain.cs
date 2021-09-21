@@ -160,14 +160,9 @@ namespace MissingC
             EnableOrDisableButtons(false);
 
             try {
-                LabelUpdate("Retrieving Companies");
-                var Companies = await Globals.browserPlaywright.GetUserCompanies();
-
-                LabelUpdate("Retrieving Locales");
-                var Locales = await Globals.browserPlaywright.GetUserLocalesID(Companies);
 
                 LabelUpdate("Retrieving Clubs");
-                var Clubs = await Globals.browserPlaywright.GetUserClubs(Locales);
+                var Clubs = await Globals.browserPlaywright.GetClubs();
             
 
                 SqliteDataAccess.SaveClubs(CompareClubsDBIn(Clubs));
