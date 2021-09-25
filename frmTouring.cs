@@ -430,7 +430,7 @@ namespace MissingC
 
             foreach(TourDay td in tdays)
             {
-                if (SqliteDataAccess.CheckTourDay(td))
+                if (SqliteDataAccess.CheckTourDay(td, band.idChainBand))
                 {
                     colorRed.Add(td.textBoxNameTD);
                 }

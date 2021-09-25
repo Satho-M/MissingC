@@ -38,7 +38,7 @@ namespace MissingC
             try
             {
                 var playwright = await Playwright.CreateAsync();
-                this.browser = await playwright.Chromium.LaunchAsync(headless: false);
+                this.browser = await playwright.Chromium.LaunchAsync(headless: true);
                 this.page = await browser.NewPageAsync();
 
 
@@ -242,33 +242,74 @@ namespace MissingC
         {
             await page.GoToAsync("https://" + serverURL + "/World/Popmundo.aspx/Artist/InviteArtist/1801455");
 
-            var infoClubs = await page.QuerySelectorAllAsync("#ctl00_cphLeftColumn_ctl01_ddlVenues option");
-
             Regex regexNameCity = new Regex(@"(?<ClubName>^(.+))\((?<ClubCity>.*)\)");
 
-            List<Club> clubs = new List<Club>();
 
-            foreach (var info in infoClubs)
+            var infoClubs = await page.QuerySelectorAllAsync("#ctl00_cphLeftColumn_ctl01_ddlVenues option");
+
+            if(infoClubs.Count() != 0)
             {
-                var value = await info.GetAttributeAsync("value");
-            
-                if (!value.Equals("0")) //Skips the selected/empty option 
+                List<Club> clubs = new List<Club>();
+
+                foreach (var info in infoClubs)
                 {
-                    Match m = regexNameCity.Match(await info.GetInnerTextAsync());
-
-                    Club c = new Club
+                    var value = await info.GetAttributeAsync("value");
+            
+                    if (!value.Equals("0")) //Skips the selected/empty option 
                     {
-                        nameClub = m.Groups["ClubName"].Value,
-                        cityClub = m.Groups["ClubCity"].Value,
-                        idClub = value,
-                        idUserClub = this.userID
-                    };
+                        Match m = regexNameCity.Match(await info.GetInnerTextAsync());
 
-                    clubs.Add(c);
+                        Club c = new Club
+                        {
+                            nameClub = m.Groups["ClubName"].Value,
+                            cityClub = m.Groups["ClubCity"].Value,
+                            idClub = value,
+                            idUserClub = this.userID
+                        };
+
+                        clubs.Add(c);
+                    }
                 }
+
+                return clubs;
+            }
+            else
+            {
+                infoClubs = await page.QuerySelectorAllAsync(".bmargin10 > tbody > tr > td");
+
+                List<Club> clubs = new List<Club>();
+
+                foreach (var info in infoClubs)
+                {
+                    var NameAndID = await info.QuerySelectorAsync("a");
+                    if(NameAndID != null)
+                    {
+                        var idClub = await NameAndID.GetAttributeAsync("href");
+                        idClub = idClub.Split('/')[4];                        
+
+                        Match m = regexNameCity.Match(await info.GetInnerTextAsync());
+
+                        var nameClub = m.Groups["ClubName"].Value;
+                        var cityClub = m.Groups["ClubCity"].Value;
+
+                        Club c = new Club
+                        {
+                            nameClub = nameClub,
+                            cityClub = cityClub,
+                            idClub = idClub,
+                            idUserClub = this.userID
+                        };
+
+                        clubs.Add(c);
+
+                        break;
+                    }
+                }
+
+                return clubs;
             }
 
-            return clubs;
+            
         }
 
         public async Task<Dictionary<string, string>> CheckBandPopularity(Band band)
