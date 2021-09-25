@@ -303,12 +303,17 @@ namespace MissingC
                 
             }
         }
-        public static bool CheckTourDay(TourDay day)
+        public static bool CheckTourDay(TourDay day, string idChain)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var parameters = new { Day = day.dateTD, Time = day.timeTD, City = day.cityTD };
-                var sql = "Select * from tbl_TourDay Where dateTD = @Day AND timeTD = @Time AND cityTD = @City";
+                var parameters = new { Day = day.dateTD, Time = day.timeTD, City = day.cityTD, IDChain = idChain };
+                var sql = "Select td.dateTD, td.timeTD, td.cityTD, c.idChain " +
+                    "FROM tbl_TourDay td " +
+                    "JOIN tbl_Tour t ON  t.idTour = td.idTourTD " +
+                    "JOIN tbl_Band b ON b.idBand = t.idBandTour " +
+                    "JOIN tbl_Chain c ON c.idChain = b.idChainBand " +
+                    "WHERE td.dateTD = @Day AND td.timeTD = @Time AND td.cityTD = @City AND c.idChain = @IDChain";
                 var result = cnn.Query(sql, parameters);
 
                 if (result.Count() > 0)
