@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Threading;
 using PlaywrightSharp;
+using System.Globalization;
 
 namespace MissingC
 {
@@ -415,14 +416,14 @@ namespace MissingC
                     {
                         if (!String.IsNullOrEmpty(bandInvites.lastInviteBand))
                         {
-                            if (DateTime.Parse(td.dateTD) <= DateTime.Parse(lastDateForInvites) && DateTime.Parse(td.dateTD + " " + td.timeTD) > DateTime.Parse(bandInvites.lastInviteBand))
+                            if (DateTime.ParseExact(td.dateTD, "dd/MM/yyyy", CultureInfo.InvariantCulture) <= DateTime.ParseExact(lastDateForInvites, "dd/MM/yyyy", CultureInfo.InvariantCulture) && DateTime.ParseExact(td.dateTD + " " + td.timeTD, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture) > DateTime.ParseExact(bandInvites.lastInviteBand, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture))
                             {
                                 InviteCalendar.Add(td);
                             }
                         }
                         else
                         {
-                            if (DateTime.Parse(td.dateTD) <= DateTime.Parse(lastDateForInvites))
+                            if (DateTime.ParseExact(td.dateTD, "dd/MM/yyyy", CultureInfo.InvariantCulture) <= DateTime.ParseExact(lastDateForInvites, "dd/MM/yyyy", CultureInfo.InvariantCulture))
                             {
                                 InviteCalendar.Add(td);
                             }
