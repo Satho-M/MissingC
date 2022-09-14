@@ -37,3 +37,8 @@ Before `Sending Invites` confirm that the Band and the tour Year are correctly s
 ## License
 
 MIT License
+
+## Disclaimer
+
+This project is no longer being maintained.
+**Your use of the program is solely at your own risk.**
