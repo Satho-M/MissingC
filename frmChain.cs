@@ -1,12 +1,7 @@
-﻿using MetroSet_UI.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MissingC
@@ -41,7 +36,7 @@ namespace MissingC
         {
             PopulateClubPool();
 
-            if(edit)
+            if (edit)
             {
                 txtChainName.Text = editingChain.nameChain.ToString();
                 PopulateClubChain();
@@ -52,7 +47,7 @@ namespace MissingC
         {
             List<Club> temp = new List<Club>(SqliteDataAccess.LoadClubsPerChain(this.idUser));
 
-            foreach(Club club in temp)
+            foreach (Club club in temp)
             {
                 listBoxClubPool.Items.Add(club);
             }
@@ -71,31 +66,68 @@ namespace MissingC
         {
             if (listBoxClubPool.SelectedItems.Count > 0)
             {
-                if (edit)
+                if (listBoxClubPool.SelectedItems.Count > 1)
                 {
-                    Club c = listBoxClubPool.SelectedItem as Club;
-                    addedClubs.Add(c);
+
+                    List<Club> pool = listBoxClubPool.SelectedItems.Cast<Club>().ToList();
+
+                    foreach (Club selected in pool)
+                    {
+                        if (edit)
+                        {
+                            addedClubs.Add(selected);
+                        }
+
+                        listBoxClubChain.Items.Add(selected);
+                        listBoxClubPool.Items.Remove(selected);
+                    }
+
+                }
+                else
+                {
+                    if (edit)
+                    {
+                        Club c = listBoxClubPool.SelectedItem as Club;
+                        addedClubs.Add(c);
+                    }
+
+                    listBoxClubChain.Items.Add(listBoxClubPool.SelectedItem);
+                    listBoxClubPool.Items.Remove(listBoxClubPool.SelectedItem);
                 }
 
-                listBoxClubChain.Items.Add(listBoxClubPool.SelectedItem);
-                listBoxClubPool.Items.Remove(listBoxClubPool.SelectedItem);
             }
         }
-
-
 
         private void btnSubClub_Click(object sender, EventArgs e)
         {
             if (listBoxClubChain.SelectedItems.Count > 0)
             {
-                if (edit)
+                if (listBoxClubChain.SelectedItems.Count > 1)
                 {
-                    Club c = listBoxClubChain.SelectedItem as Club;
-                    removedClubs.Add(c);
-                }
+                    List<Club> pool = listBoxClubChain.SelectedItems.Cast<Club>().ToList();
 
-                listBoxClubPool.Items.Add(listBoxClubChain.SelectedItem);
-                listBoxClubChain.Items.Remove(listBoxClubChain.SelectedItem);
+                    foreach (Club selected in pool)
+                    {
+                        if (edit)
+                        {
+                            addedClubs.Add(selected);
+                        }
+
+                        listBoxClubPool.Items.Add(selected);
+                        listBoxClubChain.Items.Remove(selected);
+                    }
+                }
+                else
+                {
+                    if (edit)
+                    {
+                        Club c = listBoxClubChain.SelectedItem as Club;
+                        removedClubs.Add(c);
+                    }
+
+                    listBoxClubPool.Items.Add(listBoxClubChain.SelectedItem);
+                    listBoxClubChain.Items.Remove(listBoxClubChain.SelectedItem);
+                }
             }
         }
 

@@ -40,19 +40,23 @@
             // listBoxClubChain
             // 
             this.listBoxClubChain.FormattingEnabled = true;
-            this.listBoxClubChain.Location = new System.Drawing.Point(233, 60);
-            this.listBoxClubChain.Margin = new System.Windows.Forms.Padding(2);
+            this.listBoxClubChain.ItemHeight = 16;
+            this.listBoxClubChain.Location = new System.Drawing.Point(311, 74);
+            this.listBoxClubChain.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listBoxClubChain.Name = "listBoxClubChain";
-            this.listBoxClubChain.Size = new System.Drawing.Size(140, 420);
+            this.listBoxClubChain.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.listBoxClubChain.Size = new System.Drawing.Size(185, 516);
             this.listBoxClubChain.TabIndex = 2;
             // 
             // listBoxClubPool
             // 
             this.listBoxClubPool.FormattingEnabled = true;
-            this.listBoxClubPool.Location = new System.Drawing.Point(11, 60);
-            this.listBoxClubPool.Margin = new System.Windows.Forms.Padding(2);
+            this.listBoxClubPool.ItemHeight = 16;
+            this.listBoxClubPool.Location = new System.Drawing.Point(15, 74);
+            this.listBoxClubPool.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listBoxClubPool.Name = "listBoxClubPool";
-            this.listBoxClubPool.Size = new System.Drawing.Size(140, 420);
+            this.listBoxClubPool.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.listBoxClubPool.Size = new System.Drawing.Size(185, 516);
             this.listBoxClubPool.Sorted = true;
             this.listBoxClubPool.TabIndex = 1;
             // 
@@ -60,26 +64,29 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 20);
+            this.label1.Location = new System.Drawing.Point(16, 25);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 16);
+            this.label1.Size = new System.Drawing.Size(101, 20);
             this.label1.TabIndex = 2;
             this.label1.Text = "Chain Name";
             // 
             // txtChainName
             // 
-            this.txtChainName.Location = new System.Drawing.Point(100, 19);
+            this.txtChainName.Location = new System.Drawing.Point(133, 23);
+            this.txtChainName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtChainName.Name = "txtChainName";
-            this.txtChainName.Size = new System.Drawing.Size(128, 20);
+            this.txtChainName.Size = new System.Drawing.Size(169, 22);
             this.txtChainName.TabIndex = 3;
             // 
             // btnAddClub
             // 
             this.btnAddClub.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.btnAddClub.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAddClub.Location = new System.Drawing.Point(162, 149);
+            this.btnAddClub.Location = new System.Drawing.Point(216, 183);
+            this.btnAddClub.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnAddClub.Name = "btnAddClub";
-            this.btnAddClub.Size = new System.Drawing.Size(60, 40);
+            this.btnAddClub.Size = new System.Drawing.Size(80, 49);
             this.btnAddClub.TabIndex = 4;
             this.btnAddClub.Text = "►";
             this.btnAddClub.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -89,9 +96,10 @@
             // btnSubClub
             // 
             this.btnSubClub.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSubClub.Location = new System.Drawing.Point(162, 205);
+            this.btnSubClub.Location = new System.Drawing.Point(216, 252);
+            this.btnSubClub.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnSubClub.Name = "btnSubClub";
-            this.btnSubClub.Size = new System.Drawing.Size(60, 40);
+            this.btnSubClub.Size = new System.Drawing.Size(80, 49);
             this.btnSubClub.TabIndex = 5;
             this.btnSubClub.Text = "◄";
             this.btnSubClub.UseVisualStyleBackColor = true;
@@ -99,9 +107,10 @@
             // 
             // btnDone
             // 
-            this.btnDone.Location = new System.Drawing.Point(162, 479);
+            this.btnDone.Location = new System.Drawing.Point(216, 590);
+            this.btnDone.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnDone.Name = "btnDone";
-            this.btnDone.Size = new System.Drawing.Size(60, 30);
+            this.btnDone.Size = new System.Drawing.Size(80, 37);
             this.btnDone.TabIndex = 6;
             this.btnDone.Text = "Done";
             this.btnDone.UseVisualStyleBackColor = true;
@@ -109,9 +118,9 @@
             // 
             // frmChain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 521);
+            this.ClientSize = new System.Drawing.Size(509, 631);
             this.Controls.Add(this.btnDone);
             this.Controls.Add(this.btnSubClub);
             this.Controls.Add(this.btnAddClub);
@@ -120,8 +129,8 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.listBoxClubPool);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.MaximumSize = new System.Drawing.Size(400, 560);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MaximumSize = new System.Drawing.Size(527, 678);
             this.Name = "frmChain";
             this.Load += new System.EventHandler(this.frmChain_Load);
             this.ResumeLayout(false);
