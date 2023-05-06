@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MissingC
@@ -47,6 +44,8 @@ namespace MissingC
             FillLabelDates(Helper.GetInitialDateByYear(this.year), tableLayoutPanelDates);
             FillTimeComboBox(tableLayoutPanelSingle);
             FillTimeComboBox(tableLayoutPanelDouble);
+
+            FillBandComboBox();
 
             if (edit)
             {
@@ -280,7 +279,7 @@ namespace MissingC
 
         private void FillControlsFromDB(groupTextCombo[] Controls, int year, int idBand)
         {
-            var tourType = SqliteDataAccess.GetTour(year, band.idBand, idutilizador).typeTour;
+            var tourType = SqliteDataAccess.GetTour(year, idBand, idutilizador).typeTour;
 
             if (tourType.Equals("Single"))
             {
@@ -297,9 +296,9 @@ namespace MissingC
 
             List<TourDay> tds = SqliteDataAccess.GetTourDays(year, idBand);
 
-            foreach(TourDay td in tds)
+            foreach (TourDay td in tds)
             {
-                foreach(groupTextCombo tc in Controls)
+                foreach (groupTextCombo tc in Controls)
                 {
                     if (td.textBoxNameTD.Equals(tc.TextBox.Name))
                     {
@@ -414,13 +413,13 @@ namespace MissingC
         {
             Helper.SingleCheckBoxSelection(checkedListBoxTimeDouble, e);
         }
-        
+
         private void btnTouringCheck_Click(object sender, EventArgs e)
-        {    
-            foreach(groupTextCombo tc in groupTextCombos)
+        {
+            foreach (groupTextCombo tc in groupTextCombos)
             {
                 tc.TextBox.ForeColor = Color.Black;
-            }        
+            }
 
             List<TourDay> tdays;
 
@@ -428,7 +427,7 @@ namespace MissingC
 
             List<string> colorRed = new List<string>();
 
-            foreach(TourDay td in tdays)
+            foreach (TourDay td in tdays)
             {
                 if (SqliteDataAccess.CheckTourDay(td, band.idChainBand))
                 {
@@ -436,7 +435,7 @@ namespace MissingC
                 }
             }
 
-            foreach(string cr in colorRed)
+            foreach (string cr in colorRed)
             {
                 foreach (groupTextCombo tc in groupTextCombos)
                 {
@@ -475,7 +474,7 @@ namespace MissingC
                 tdays = GetTourDays(tableLayoutPanelDates, tableLayoutPanelSingle, tableLayoutPanelDouble);
 
                 //Adds TourID and UserID to TourDays
-                foreach(TourDay td in tdays)
+                foreach (TourDay td in tdays)
                 {
                     td.idTourTD = TourID;
                     td.idUserTD = idutilizador;
@@ -493,6 +492,25 @@ namespace MissingC
                 }
 
                 this.Close();
+            }
+        }
+
+        private void FillBandComboBox()
+        {
+            var bands = SqliteDataAccess.LoadBandsByChainID(band.idChainBand);
+
+            bands = bands.Where(b => b.idBand != band.idBand).ToList();
+
+            cmbBoxBands.DataSource = bands;
+            cmbBoxBands.DisplayMember = "nameBand";
+        }
+        private void btnCopyTour_Click(object sender, EventArgs e)
+        {
+            if (cmbBoxBands.SelectedValue != null)
+            {
+                Band selectedBand = (Band)cmbBoxBands.SelectedItem;
+
+                FillControlsFromDB(groupTextCombos, this.year, selectedBand.idBand);
             }
         }
     }
