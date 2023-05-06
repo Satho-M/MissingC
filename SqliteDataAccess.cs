@@ -5,8 +5,6 @@ using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MissingC
 {
@@ -50,7 +48,7 @@ namespace MissingC
                 var sql = "Select * from tbl_Club Where idUserClub = @ID";
                 var result = cnn.Query<Club>(sql, parameters);
 
-                
+
                 return result.ToList();
             }
         }
@@ -74,7 +72,7 @@ namespace MissingC
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                foreach (Club club in clubs) 
+                foreach (Club club in clubs)
                 {
                     var parameteres = new
                     {
@@ -86,7 +84,7 @@ namespace MissingC
                     };
 
                     var sql = "Insert into tbl_Club (idClub, nameClub, cityClub, idChainClub, idUserClub) values (@ID, @Name, @City, @IDChain, @IDUser)";
-                                    
+
                     cnn.Execute(sql, parameteres);
                 }
             }
@@ -108,25 +106,25 @@ namespace MissingC
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                foreach (Club club in clubs) 
+                foreach (Club club in clubs)
                 {
-                    var parameters = new { ID = club.idClub, IDChain = club.idChainClub};
+                    var parameters = new { ID = club.idClub, IDChain = club.idChainClub };
                     var sql = "Update tbl_Club Set idChainClub = @IDChain Where idClub = @ID";
-                
+
                     cnn.Execute(sql, parameters);
                 }
             }
         }
-        
+
         //Chains
         public static List<Chain> LoadChains(int id)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var parameters = new { ID = id};
+                var parameters = new { ID = id };
                 var sql = "Select * from tbl_Chain Where idUserChain = @ID";
                 var result = cnn.Query<Chain>(sql, parameters).ToList();
-                
+
                 return result;
             }
         }
@@ -198,11 +196,22 @@ namespace MissingC
                 return result;
             }
         }
+        public static List<Band> LoadBandsByChainID(string idChain)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                var parameters = new { Id = idChain };
+                var sql = "Select * from tbl_Band Where idChainBand = @ID";
+                var result = cnn.Query<Band>(sql, parameters).ToList();
+
+                return result;
+            }
+        }
         public static List<Band> LoadBands(Chain chain)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var parameters = new {Id = chain.idChain };
+                var parameters = new { Id = chain.idChain };
                 var sql = "Select * from tbl_Band Where idChainBand = @ID";
                 var result = cnn.Query<Band>(sql, parameters).ToList();
 
@@ -284,23 +293,23 @@ namespace MissingC
                 return false;
             }
         }
-        public static Tour GetTour(int year, int idBand, int idUser) 
+        public static Tour GetTour(int year, int idBand, int idUser)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
                 var output = cnn.QuerySingle<Tour>("Select * from tbl_Tour Where yearTour=@Year AND idBandTour=@idBand AND idUserTour=@idUser", new { year, idBand, idUser });
-                
+
                 return output;
             }
-            
+
         }
         public static void UpdateTour(Tour tour)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                
-                    cnn.Execute("Update tbl_Tour Set yearTour=@yearTour, typeTour=@typeTour Where idTour = @idTour", new { tour.yearTour, tour.typeTour, tour.idTour});
-                
+
+                cnn.Execute("Update tbl_Tour Set yearTour=@yearTour, typeTour=@typeTour Where idTour = @idTour", new { tour.yearTour, tour.typeTour, tour.idTour });
+
             }
         }
         public static bool CheckTourDay(TourDay day, string idChain)
@@ -324,11 +333,11 @@ namespace MissingC
         }
         public static List<TourDay> GetTourDays(int year, int idBand)
         {
-            
+
 
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var parameters = new {Year =  year, IDBand = idBand };
+                var parameters = new { Year = year, IDBand = idBand };
 
                 var sql = "Select * from tbl_TourDay " +
                     "INNER JOIN tbl_Tour ON tbl_TourDay.idTourTD = tbl_Tour.idTour " +
@@ -351,14 +360,14 @@ namespace MissingC
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                    foreach (TourDay tourday in tourdays)
-                    {
-                        cnn.Execute("Insert into tbl_TourDay (dateTD, timeTD, cityTD, textBoxNameTD, idUserTD, idTourTD) values (@dateTD, @timeTD, @cityTD, @textBoxNameTD , @idUserTD, @idTourTD)", tourday);
-                    }
+                foreach (TourDay tourday in tourdays)
+                {
+                    cnn.Execute("Insert into tbl_TourDay (dateTD, timeTD, cityTD, textBoxNameTD, idUserTD, idTourTD) values (@dateTD, @timeTD, @cityTD, @textBoxNameTD , @idUserTD, @idTourTD)", tourday);
+                }
 
             }
         }
-       
+
 
     }
 }
