@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using PlaywrightSharp;
+﻿using PlaywrightSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,19 +38,29 @@ namespace MissingC
                 var playwright = await Playwright.CreateAsync();
                 this.browser = await playwright.Chromium.LaunchAsync(headless: true);
                 this.page = await browser.NewPageAsync();
-
+                await BlockAds(this.page);
+                await BlockImages(this.page);
 
                 await this.page.GoToAsync(this.initialPage);
                 Console.WriteLine(page.Url);
             }
-            catch(PlaywrightSharpException e)
+            catch (PlaywrightSharpException e)
             {
                 if (e.Message.Contains("DISCONNECTED"))
                 {
-                    MessageBox.Show("Error: Check your connection and try again."); 
-                    System.Environment.Exit(1);                  
+                    MessageBox.Show("Error: Check your connection and try again.");
+                    System.Environment.Exit(1);
                 }
             }
+        }
+
+        private static async Task BlockAds(IPage _page)
+        {
+            await _page.RouteAsync(new Regex(@"(google)"), async (r, _) => await r.AbortAsync());
+        }
+        private static async Task BlockImages(IPage _page)
+        {
+            await _page.RouteAsync("**/*.{png,jpg,jpeg,gif}", async (r, _) => await r.AbortAsync());
         }
 
         public async Task<Status> Login(string username, string password)
@@ -247,14 +255,14 @@ namespace MissingC
 
             var infoClubs = await page.QuerySelectorAllAsync("#ctl00_cphLeftColumn_ctl01_ddlVenues option");
 
-            if(infoClubs.Count() != 0)
+            if (infoClubs.Count() != 0)
             {
                 List<Club> clubs = new List<Club>();
 
                 foreach (var info in infoClubs)
                 {
                     var value = await info.GetAttributeAsync("value");
-            
+
                     if (!value.Equals("0")) //Skips the selected/empty option 
                     {
                         Match m = regexNameCity.Match(await info.GetInnerTextAsync());
@@ -282,10 +290,10 @@ namespace MissingC
                 foreach (var info in infoClubs)
                 {
                     var NameAndID = await info.QuerySelectorAsync("a");
-                    if(NameAndID != null)
+                    if (NameAndID != null)
                     {
                         var idClub = await NameAndID.GetAttributeAsync("href");
-                        idClub = idClub.Split('/')[4];                        
+                        idClub = idClub.Split('/')[4];
 
                         Match m = regexNameCity.Match(await info.GetInnerTextAsync());
 
@@ -309,7 +317,7 @@ namespace MissingC
                 return clubs;
             }
 
-            
+
         }
 
         public async Task<Dictionary<string, string>> CheckBandPopularity(Band band)
